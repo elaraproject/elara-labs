@@ -1,0 +1,97 @@
+// include "wavecommon.idp"
+// include "wavemeshxy.idp"
+
+int top = 1;
+int right = 2;
+int bottom = 3;
+int left = 4;
+int all = 5;
+int squaren = 20;
+
+border boxtop(t=1, 0){ x=t; y=1; label=all; } // top
+border boxright(t=0, 1){ x=1; y=t; label=all; } // right
+border boxbottom(t=0, 1){ x=t; y=0; label=all; } // bottom
+border boxleft(t=1, 0){ x=0; y=t; label=all; } // left
+
+// plot(boxtop(squaren), cmm="Top border", wait=1);
+// plot(boxright(squaren), cmm="Right border", wait=1);
+// plot(boxbottom(squaren), cmm="Bottom border", wait=1);
+// plot(boxleft(squaren), cmm="Left border", wait=1);
+
+// mesh Th = buildmesh(boxtop(squaren) + boxright(squaren) + boxbottom(squaren) + boxleft(squaren));
+mesh Th = square(squaren, squaren);
+plot(Th, value=1, wait=1);
+
+/*
+For values of k^2 = (n^2 + m^2) pi^2
+then the homogenous Dirichlet problem
+yields a solution even with
+E = 0 at the boundaries.
+
+For all other values of k, the Dirichlet
+problem (E = 0 at boundaries) yields a
+null solution, different boundary conditions
+are necessary instead.
+*/
+
+// func AnalyticalEx = sin(pi*x) * sin(pi*y);
+// func AnalyticalEy = sin(pi*x) * sin(pi*y);
+func AnalyticalMag = sin(pi*x) * sin(pi*y);
+
+fespace Vh(Th, P1);
+
+// finite element functions for the electric field
+// to be solved for
+// do NOT rename these as doing so will break
+// the macros
+Vh TestPhi;
+Vh Emag;
+Vh ExactEmag=AnalyticalMag;
+
+macro Vec(F) [F#x, F#y] //
+macro grad(u) [dx(u), dy(u)] //
+macro J(F) [grad(F#x), grad(F#y)] //
+macro magnitude(F) sqrt(F#x^2 + F#y^2) //
+
+real ksquared = 2 * pi^2;
+
+// Note: Helmholz equation = all bilinear terms
+// problem ElectricField(Vec(E), Vec(Phi))
+//     = int2d(Th)(
+//         ksquared * Vec(E)' * Vec(Phi)
+//     )
+//     - int2d(Th)(
+//         (J(E) : J(Phi))
+//     )
+//     + on(all, Ex=0)
+//     + on(all, Ey=0);
+
+problem ElectricField(Emag, TestPhi)
+    = int2d(Th)(
+        ksquared * Emag * TestPhi - grad(Emag)' * grad(TestPhi)
+    )
+    + on(all, Emag=0);
+
+// solve
+cout << "Solving PDE (script V5)..." << endl;
+ElectricField;
+
+plot(Emag, value=true, fill=true, dim=3, cmm="Electric field (spatial components)", wait=1);
+
+plot(ExactEmag, value=true, fill=true, dim=3, cmm="Electric field (analytical solution)", wait=1);
+
+
+/*
+Emag = magnitude(E);
+Errx = Ex - AnalyticalEx;
+Erry = Ey - AnalyticalEy;
+Errmag = Emag - AnalyticalMag;
+
+plot(Emag, Vec(E), value=true, fill=true, dim=3, cmm="Electric field (spatial components x', y')", wait=1);
+
+plot(ExactEmag, Vec(ExactE), value=true, fill=true, dim=3, cmm="Electric field (analytical solution)", wait=1);
+
+plot(Errx, value=true, fill=true, cmm="Absolute difference from analytical solution (x-component)", wait=1);
+plot(Erry, value=true, fill=true, cmm="Absolute difference from analytical solution (y-component)", wait=1);
+plot(Errmag, value=true, fill=true, cmm="Absolute difference from analytical solution (magnitude)", wait=1);
+*/

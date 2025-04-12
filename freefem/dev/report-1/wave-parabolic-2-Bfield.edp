@@ -1,0 +1,121 @@
+include "wavecommon.idp"
+include "wavemeshxy.idp"
+
+// Note: the magnetic field's
+// components are technically speaking
+// using (x, z) coordinates not (x, y)
+// but as FreeFEM cannot handle this
+// in a 2D problem we will solve it on
+// an (x, y) grid, which is equivalent
+// in results because the electric and
+// magnetic PDEs are decoupled and
+// are solved separately and so this
+// preserves the same physics
+
+// save mesh (if desired)
+if (!testrun && issavemesh) {
+    string postfix = "Bfield";
+    string meshsavefile = "solutions/parabolic-mesh" + saveiter + postfix + ".msh";
+    savemesh(Th, meshsavefile);
+}
+
+// initial conditions (plane wave)
+// the normal vector is aligned along the x-axis
+// i.e. n = [1, 0, 0] so wavevector = [k, 0, 0]
+// the amplitude vector B0 is aligned along the
+// z-axis i.e. B0 = [0, 0, norm(B0)]
+func Bx0 = 0.0;
+func By0 = B0 * cos(k * x) * H(x, y);
+// initial first derivatives in time
+// (ignoring x-component because Bx0 = 0)
+func dBdTy0 = B0 * k * c * sin(k * x) * H(x, y);
+// initial second derivatives in time
+func dBdTdTy0 = -B0 * k^2 * c^2 * cos(k * x) * H(x, y);
+
+// Taylor approximation for B^(n-1) for initial condition
+func Bx0minus1 = 0.0;
+func By0minus1 = By0(x, y) - dBdTy0(x, y)*dt - 1/2 * dBdTdTy0(x, y)*dt^2;
+
+// Taylor approximation for B^(n+1) for initial condition
+func Bx0plus1 = 0.0;
+func By0plus1 = By0(x, y) + dt * dBdTy0(x, y) + dt^2 / 2 * dBdTdTy0(x, y);
+
+// finite element functions for the magnetic field
+// to be solved for
+// do NOT rename these as doing so will break
+// the macros
+Vh BxNow=Bx0, ByNow=By0; // to store the current iteration in time
+Vh BxNext=Bx0plus1, ByNext=By0plus1; // to store the (next) iteration in time being calculated
+Vh BxPrev=Bx0minus1, ByPrev=By0minus1; // to store the previous iteration in time
+
+// Array to store the solution for all times
+Vh[int] Bfullx(tsteps);
+Vh[int] Bfully(tsteps);
+
+// we have to scale the arrows way
+// up because the magnitude of the magnetic
+// field is tiny compared to the electric field
+real arrowscale = 3e7;
+
+// Plot the initial condition
+plot(ByNow, Now(B), coef=arrowscale, value=true, cmm="Initial condition (B field)", wait=1);
+
+problem MagneticField([BxNext, ByNext], [Phix, Phiy])
+    = int2d(Th)(
+        // Bilinear term 1
+        Vec(Phi)' * Next(B)/dt^2
+    )
+    + int2d(Th)(
+        // Bilinear term 2
+        c^2 * (Jnext(B) : J(Phi))
+    )
+    + int1d(Th, 3)(
+        // Bilinear term 3
+        c * Vec(Phi)' * Next(B)/(2*dt)
+    )
+    + int2d(Th)(
+        // Linear term 1
+        // the remaining parts of the time derivative
+        // are (confusingly) linear terms
+        Vec(Phi)' * Prev(B)/dt^2 - 2 * Vec(Phi)' * Now(B)/dt^2
+    )
+    + int1d(Th, 3)(
+        // Linear term 2 - this is the remaining
+        // part of the boundary term time derivative
+        // (-1/c dB/dt)
+        c * Vec(Phi)' * Prev(B)/(2*dt)
+    );
+
+for (int i = 0; i < tsteps; i++) {
+    // solve PDE for that timestep
+    MagneticField;
+    // plot
+    string epsfilename = "solutions/eps-efield/run" + saveiter + "/run" + saveiter + "frame" + i + ".eps";
+    if (!testrun) {
+        plot(ByNow, Now(B), value=true, fill=true, coef=arrowscale, cmm="Magnetic field t = " + t, ps=epsfilename);
+    } else {
+        plot(ByNow, Now(B), value=true, fill=true, coef=arrowscale, cmm="Magnetic field t = " + t);
+    }
+    // store current values
+    Bfullx[i] = BxNow;
+    Bfully[i] = ByNow;
+    // timestep
+    copy(Prev(B), Now(B));
+    copy(Now(B), Next(B));
+    t += dt;
+}
+
+cout << "Saving solutions..." << endl;
+
+if (!testrun && issavesol) {
+    createsavefile(Bsave);
+    for (int i = 0; i < tsteps; i++) {
+        for (int j = 0; j < Vh.ndof; j++) {
+            savesolution(Bfull, Bsave);
+        }   
+    }
+    // file automatically closed upon
+    // end of if block
+}
+
+cout << "Solving complete, solutions saved." << endl;

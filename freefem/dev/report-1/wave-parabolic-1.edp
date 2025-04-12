@@ -1,0 +1,200 @@
+// load modules
+load "iovtk"
+
+// set this to true to save the solution
+// and mesh data
+bool testrun = false;
+// UPDATE THIS BEFORE RUNNING
+// otherwise you'll overwrite existing
+// save data
+int saveiter = 3;
+bool createfolder = false;
+bool savemesh = false;
+bool savesol = ;
+
+if (createfolder && !testrun) {
+    system("mkdir solutions/Ex/run" + saveiter);
+    system("mkdir solutions/Ey/run" + saveiter);
+    system("mkdir solutions/eps/run" + saveiter);
+}
+real c = 3e8;
+// real c = 2.0; // for testing purposes
+real wavelength = 30; // cm
+real lambda = wavelength / 100;
+real k = (2 * pi) / lambda;
+
+real t0 = 0.0;
+real t = t0;
+// real fps = 60.0; // output to a 60FPS animation
+// real dt = 1 / fps; // approximately 3.3 ms per step
+int tsteps = 50;
+// set dt very small because the solution
+// tends to blow up due to the speed of light
+// being a huge number
+real dt = 1E-10;
+real tf = t0 + tsteps * dt;
+//int tsteps = 10;
+
+int n = 2; // mesh detail, recommend n < 3
+real R1 = 1.0; // radius of primary reflectors opening
+real R2 = 0.1; // radius of secondary reflectors opening
+real b = 0.05; // radius of the primary reflector beam outlet (hole)
+real d1 = 0.5; // x-location of primary reflector (must be >0)
+real f1 = d1 - R1/2; // focus of first reflector
+
+real D = 4.0; // width of the simulation volume bounding box
+real L = 4.0; // height of the simulation volume bounding box
+
+real E0 = 1.0; // electric field amplitude
+real B0 = E0 / c; // magnetic field amplitude
+
+// parabolic reflectors
+
+// we split the main reflector into 2 pieces
+// because there is a beam outlet (hole) in the middle
+// so we represent as 2 pieces of a piecewise function
+border reflector1down(t=-R1, -b){ x=(d1 - 1/(2*R1) * t^2); y=t; label=1; }
+border reflector1up(t=b, R1){ x=(d1 - 1/(2*R1) * t^2); y=t; label=1; }
+// secondary reflector
+border reflector2(t=-R2, R2){ x=(d1 - (R1/2) + 1/(2*R1) * t^2); y = t; label=2; }
+
+// functions to built the bounding box borders
+
+func real verticalWallY(real t){
+    return D*t - D/2;
+}
+
+func real horizontalWallX(real t){
+    return L*t - L/2;
+}
+
+// bounding box
+// we need to make sure the domain is on the left side
+// of the border always, so for some of these borders
+// we reverse the parametrization
+int squaren = 20 * n;
+border boxL(t=1, 0){ x=-L/2; y=verticalWallY(t); label=3; }
+border boxR(t=0, 1){ x=L/2; y=verticalWallY(t); label=3; }
+border boxT(t=1, 0){ x=horizontalWallX(t); y=D/2; label=3; }
+border boxB(t=0, 1){ x=horizontalWallX(t); y=-D/2; label=3; }
+
+// our heaviside function to keep the incident
+// beam within bounds
+func H = abs(y) - 0.95*R1 <= 0.0 && x - f1 <= 0.0 ? 1.0 : 0.0;
+
+// initial conditions (plane wave)
+// the normal vector is aligned along the x-axis
+// i.e. n = [1, 0] so wavevector = [k, 0]
+// the amplitude vector E0 is aligned along the
+// y-axis i.e. E0 = [0, norm(E0)]
+func Ex0 = 0.0;
+func Ey0 = E0 * cos(k * x) * H(x, y);
+// initial first derivatives in time
+// (ignoring x-component because Ex0 = 0)
+func dEdTy0 = E0 * k * c * sin(k * x) * H(x, y);
+// initial second derivatives in time
+func dEdTdTy0 = -E0 * k^2 * c^2 * cos(k * x) * H(x, y);
+
+// Taylor approximation for E^(n-1) for initial condition
+func Ex0minus1 = 0.0;
+func Ey0minus1 = Ey0(x, y) - dt * dEdTy0(x, y) - dt^2 / 2 * dEdTdTy0(x, y);
+
+// Taylor approximation for E^{n+1} for initial condition
+func Ex0plus1 = 0.0;
+func Ey0plus1 = Ey0(x, y) + dt * dEdTy0(x, y) + dt^2 / 2 * dEdTdTy0(x, y);
+
+// Uncomment this line to plot all the borders
+// plot(reflector1up(30) + reflector1down(30) + reflector2(5) + boxL(squaren) + boxR(squaren) + boxT(squaren) + boxB(squaren), wait=1, cmm="Boundaries", wait=1);
+
+// build geometry
+// border(nn) means to create a border with nn vertices
+mesh Th = buildmesh(reflector1up(10 * n) + reflector1down(10 * n) + reflector2(5 * n) + boxL(squaren) + boxT(squaren) + boxR(squaren) + boxB(squaren));
+
+// Plot the generated domain mesh
+plot(Th, cmm="Finite element mesh", wait=1);
+if (!testrun && savemesh) {
+    savemesh(Th, "solutions/parabolic-mesh" + saveiter + ".msh");
+}
+
+// finite element space
+fespace Vh(Th, P1b);
+// finite element functions for the electric field
+// to be solved for
+// do NOT rename these as doing so will break
+// the macros
+Vh ExNow=Ex0, EyNow=Ey0; // to store the current iteration in time
+Vh ExNext=Ex0plus1, EyNext=Ey0plus1; // to store the (next) iteration in time being calculated
+Vh ExPrev=Ex0minus1, EyPrev=Ey0minus1; // to store the previous iteration in time
+Vh Phix, Phiy;
+
+// Array to store the solution for all times
+Vh[int] Efullx(tsteps);
+Vh[int] Efully(tsteps);
+
+// Macro for automatically returning
+// a vector (function) by basename so you can
+// write Vec(F) rather than [Fx, Fy]
+macro Vec(F) [F#x, F#y]//
+// Same thing but for getting [FxNow, FyNow]
+// for timestepping 
+macro Prev(F) [F#xPrev, F#yPrev]//
+// Same thing but for getting [FxPrev, FyPrev]
+macro Now(F) [F#xNow, F#yNow]//
+// Same thing but for getting [FxNext, FyNext]
+macro Next(F) [F#xNext, F#yNext]//
+// Assign the components of one vector to another
+macro copy(A, B) A[0] = B[0]; A[1] = B[1];//
+
+// gradient macro for scalar function u = u(x, y)
+macro grad(u) [dx(u), dy(u)] //
+// jacobian macro for vector function F = [Fx, Fy]
+macro J(F) [grad(F#x), grad(F#y)] //
+// jacobian macro for the next step of a vector function F
+macro Jnext(F) [grad(F#xNext), grad(F#yNext)] //
+
+// Plot the initial condition
+plot(Now(E), coef=0.1, value=true, cmm="Initial condition", wait=1);
+
+problem ElectricField([ExNext, EyNext], [Phix, Phiy])
+    = int2d(Th)(
+        // Bilinear term 1
+        Vec(Phi)' * Next(E)/dt^2
+    )
+    + int2d(Th)(
+        // Bilinear term 2
+        c^2 * (Jnext(E) : J(Phi))
+    )
+    + int1d(Th, 3)(
+        // Bilinear term 3
+        c * Vec(Phi)' * Next(E)/(2*dt)
+    )
+    + int2d(Th)(
+        // Linear term 1
+        // the remaining parts of the time derivative
+        // are (confusingly) linear terms
+        Vec(Phi)' * Prev(E)/dt^2 - 2 * Vec(Phi)' * Now(E)/dt^2
+    )
+    + int1d(Th, 3)(
+        // Linear term 2 - this is the remaining
+        // part of the boundary term time derivative
+        // (-1/c dE/dt)
+        c * Vec(Phi)' * Prev(E)/(2*dt)
+    );
+
+for (int i = 0; i < tsteps; i++) {
+    ElectricField;
+    // plot
+    string epsfilename = "solutions/eps/run" + saveiter + "/run" + saveiter + "frame" + i + ".eps";
+    if (!testrun) {
+        plot(EyNow, Now(E), value=true, fill=true, cmm="Electric field t = " + t, ps=epsfilename);
+    } else {
+        plot(EyNow, Now(E), value=true, fill=true, cmm="Electric field t = " + t);
+    }
+    // store current values
+    Efullx[i] = ExNow;
+    Efully[i] = EyNow;
+    // timestep
+    copy(Prev(E), Now(E));
+    copy(Now(E), Next(E));
+    t += dt;
+}

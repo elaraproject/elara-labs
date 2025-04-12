@@ -1,0 +1,205 @@
+/*
+Common code for the EM wave PDE simulations.
+Adjust the parameters here, and then run:
+
+```sh
+FreeFEM++ wave-parabolic-2-Efield.edp
+FreeFEM++ wave-parabolic-2-Bfield.edp
+```
+
+If on Windows, before running, make sure to
+also run:
+
+```powershell
+mkdir solutions/eps-efield/run<ENTER ITERATION>/
+mkdir solutions/eps-bfield/run<ENTER ITERATION>/
+```
+
+NOTE: all commands must be run in the elara/
+folder as the FreeFEM script depends on relative paths.
+*/
+
+// set this to false to save the solution
+// and mesh data
+bool testrun = true; // default true
+// solution iteration, fill it in
+// otherwise you'll overwrite existing
+// save data
+int saveiter = 8; // UPDATE THIS BEFORE RUNNING
+// automatic folder creation; ONLY supported
+// on mac & linux, does not work on Windows
+bool createfolder = false; // default false
+// whether to save mesh to file(s)
+bool issavemesh = true; // default true
+// whether to save solution to file(s)
+bool issavesol = true; // default true
+// one of "windows", "mac", "linux"
+string platform = "windows"; // UPDATE THIS BEFORE RUNNING
+// simulation length
+int tsteps = 200; // use 5 for testing
+
+// Automatically create necessary folders
+if (createfolder && !testrun) {
+    string command = "mkdir "; // ending space intentional!
+    if (platform == "windows") {
+        cout << "Be aware that automatic folder creation is not supported on Windows" << endl;
+    }
+    else {
+        system("mkdir solutions/eps-efield/run" + saveiter);
+        system("mkdir solutions/eps-bfield/run" + saveiter);
+    }
+}
+
+// Simulation parameters & constants
+real c = 1.0; // 3e8
+// eps is the parameter in the added
+// diffusion term
+real eps = 0.01; // smoothing factor
+real wavelength = 30; // cm
+real lambda = wavelength / 100;
+real k = (2 * pi) / lambda;
+
+real t0 = 0.0;
+real t = t0;
+// set dt very small because the solution
+// tends to blow up due to the speed of light
+// being a huge number
+real dt = 0.001; // 1E-10
+real tf = t0 + tsteps * dt;
+
+real n = 2.5; // mesh detail, recommend n < 3
+// Simulation parameters - all units are SI
+real R1 = 1.0; // radius of primary reflectors opening
+real R2 = 0.1; // radius of secondary reflectors opening
+real b = 0.05; // radius of the primary reflector opening (hole)
+real d1 = 0.5; // x-location of primary reflector (must be >0)
+real f1 = d1 - R1/2; // focus of first reflector
+
+real D = 16.0; // width of the simulation volume bounding box
+real L = 16.0; // height of the simulation volume bounding box
+
+real E0 = 1.0; // electric field amplitude
+real B0 = E0 / c; // magnetic field amplitude
+
+int squaren = 20 * n; // simulation box relative detail
+
+// functions to build the bounding box borders
+func real verticalWallY(real t){
+    return D*t - D/2;
+}
+// this is technically the same function
+// but named slightly differently
+func real verticalWallZ(real t){
+    return verticalWallY(t);
+}
+
+func real horizontalWallX(real t){
+    return L*t - L/2;
+}
+
+// our heaviside function to keep the incident
+// beam within bounds; we use 0.95 as a scaling factor
+// meaning 95% of the parabola is covered
+func H = abs(y) - 0.95*R1 <= 0.0 && x - f1 <= 0.0 ? 1.0 : 0.0;
+// equivalent but in the z-direction
+func Hz = abs(z) - 0.95*R1 <= 0.0 && x - f1 <= 0.0 ? 1.0 : 0.0;
+
+// General utility functions & macros
+// Each of the macros is specified
+// in 2D i.e. with (x, y) coords
+// but also has an equivalent
+// that uses (x, z) coords
+// which is used for the magnetic field
+
+// Macro for automatically returning
+// a vector (function) by basename so you can
+// write Vec(F) rather than [Fx, Fy]
+macro Vec(F) [F#x, F#y] //
+macro vecz(F) [F#x, F#z] //
+// Same thing but for getting [FxNow, FyNow]
+// for timestepping 
+macro Prev(F) [F#xPrev, F#yPrev] //
+macro Prevz(F) [F#xPrev, F#zPrev] //
+// Same thing but for getting [FxPrev, FyPrev]
+macro Now(F) [F#xNow, F#yNow] //
+macro Nowz(F) [F#xNow, F#zNow] //
+// Same thing but for getting [FxNext, FyNext]
+macro Next(F) [F#xNext, F#yNext] //
+macro Nextz(F) [F#xNext, F#zNext] //
+// Assign the components of one vector to another
+macro copy(A, B) A[0] = B[0]; A[1] = B[1] //
+
+// magnitude macro for vector-valued function
+// F = [Fx, Fy]
+macro magnitude(F) sqrt(F#x^2 + F#y^2) //
+// gradient macro for scalar function u = u(x, y)
+macro grad(u) [dx(u), dy(u)] //
+// gradient macro for scalar function u = u(x, z)
+macro gradz(u) [dx(u), dz(u)] //
+// divergence
+macro div(F) (dx(F#x) + dy(F#y)) //
+// jacobian macro for vector function F = [Fx, Fy]
+macro J(F) [grad(F#x), grad(F#y)] //
+// equivalent for F = [Fx, Fz]
+macro Jz(F) [gradz(F#x), gradz(F#z)] //
+// jacobian macro for the next step of a vector function F = [Fx, Fy]
+macro Jnext(F) [grad(F#xNext), grad(F#yNext)] //
+// equivalent for F = [Fx, Fz]
+macro Jnextz(F) [gradz(F#xNext), gradz(F#zNext)] //
+
+// Create the full (relative) file path
+// for a solution save file
+// Name must be one of "Ex", "Ey"
+func string newsavefilename(string name) {
+    return "solutions/" + name + "/solution-run" + saveiter + ".txt";
+}
+
+// Create a save file to save a solution array to
+// This is the manual implementation
+func ofstream createsavefilemanual(string name) {
+    string fname = newsavefilename(name);
+    ofstream file(fname);
+    return file;
+}
+
+// This is the vectorized implementation that you should use
+macro createsavefile(file) ofstream file#x(newsavefilename("Ex")); ofstream file#y(newsavefilename("Ey")); //
+// Version that uses (x, z) rather than (x, y)
+macro createsavefileZ(file) ofstream file#x(newsavefilename("Bx")); ofstream file#z(newsavefilename("Bz")); //
+
+// Save solution array to text
+// As freefem does not support true void functions, we return
+// an int just like standard C practice
+// This is the manual implementation
+// func int savesolutionmanual(Vh u, ofstream name) {
+//     file << u;
+//     return 0;
+// }
+
+// This is the vectorized implementation that you should use
+// u: an array of finite element functions
+//    with components ending in -x or -y
+//    e.g. u = F for Fx, Fy 
+// file: the prefix of the variable
+//    storing the filename, e.g.
+//    file = Fsave for Fsavex, Fsavey
+macro savesolution(u, file) file#x << u#x[i][][j]; file#y << u#y[i][][j]; //
+// Version that uses (x, z) rather than (x, y)
+macro savesolutionZ(u, file) file#x << u#x[i][][j]; file#z << u#z[i][][j]; //
+
+// For just a single finite element function u
+macro savescalarsolution(u, file) file#x << u#x[][i]; file#y << u#y[][i]; //
+
+/* 
+Example usage of solution save functions:
+
+```
+// for saving an array [Efullx, Efully]
+// Esave is an arbitrary file variable name
+createsavefile(Esave);
+for (int i = 0; i < tsteps; i++) {
+    savesolution(Efull, Esave);
+}
+cout << "Solution save complete." << endl;
+```
+*/

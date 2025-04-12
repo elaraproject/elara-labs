@@ -1,0 +1,5 @@
+// cross product magnitude for 2 2D vectors
+// (by setting z = 0)
+func real cross(real Ax, real Ay, real Bx, real By) {
+    return Ax*By - Ay*Bx;
+}

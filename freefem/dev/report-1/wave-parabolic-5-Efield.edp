@@ -1,0 +1,69 @@
+include "wavecommon.idp"
+include "wavemeshxy.idp"
+
+// save mesh (if desired)
+if (!testrun && issavemesh) {
+    string postfix = "Efield";
+    string meshsavefile = "solutions/parabolic-mesh" + saveiter + postfix + ".msh";
+    savemesh(Th, meshsavefile);
+}
+
+// coordinate transformation
+real alpha = L/2;
+real beta = D/2;
+func xprime = alpha * tanh(x);
+func yprime = beta * tanh(y);
+// J(x') * J(x') term
+func JacobTransform = alpha^2 * (1 - xprime^2)^2 + beta^2 * (1 - yprime^2)^2;
+
+// finite element functions for the electric field
+// to be solved for
+// do NOT rename these as doing so will break
+// the macros
+Vh Efield;
+Vh TestPhi;
+Vh EfieldOriginal;
+
+
+// Note: Helmholz equation = all bilinear terms
+problem ElectricField(Efield, TestPhi)
+    = int2d(Th)(
+        k^2 * TestPhi * Efield
+    )
+    - int2d(Th)(
+        JacobTransform * (grad(Efield)' * grad(TestPhi))
+    )
+    + on(3, Efield=0.001);
+    // - int1d(Th, 3)(
+    //     k * Vec(Phi)' * Vec(E)
+    // );
+
+    // + on(3, Ex=sin(pi*x))
+    // + on(3, Ey=cos(pi*x));
+    // + int1d(Th, 3)(
+    //     // Bilinear term 3
+    //     Vec(Phi)' * Vec(E)
+    // );
+
+/*
+problem ElectricField(Efield, TestPhi)
+    = int2d(Th)(
+        k^2 * TestPhi * Efield
+    )
+    - int2d(Th)(
+        grad(Efield)' * grad(TestPhi)
+    )
+    + on(3, Efield=1);
+*/
+
+// solve
+cout << "Solving PDE (script V5)..." << endl;
+ElectricField;
+
+// plot(Efield, value=true, fill=true, cmm="Electric field (spatial components)", ps=epsfilename);
+plot(Efield, value=true, fill=true, cmm="Electric field (spatial components, transformed coordinates x', y')", wait=1);
+
+func Etransform = Efield(x, y);
+
+EfieldOriginal = Etransform(alpha * tanh(x), beta * tanh(y));
+plot(EfieldOriginal, value=true, fill=true, cmm="Electric field (spatial components, original coordinates x, y)", wait=1);

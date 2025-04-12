@@ -1,0 +1,111 @@
+include "wavecommon.idp"
+
+// This is a simulation validation to make
+// sure that the boundaries are correct
+// by testing them on the bounding box
+
+// build geometry - (x, y) coordinates version
+
+// bounding box
+// we need to make sure the domain is on the left side
+// of the border always, so for some of these borders
+// we reverse the parametrization
+border boxL(t=1, 0){ x=-L/2; y=verticalWallY(t); label=3; }
+border boxR(t=0, 1){ x=L/2; y=verticalWallY(t); label=3; }
+border boxT(t=1, 0){ x=horizontalWallX(t); y=D/2; label=3; }
+border boxB(t=0, 1){ x=horizontalWallX(t); y=-D/2; label=3; }
+
+// Uncomment this line to plot all the borders
+// plot(reflector1up(30) + reflector1down(30) + reflector2(5) + boxL(squaren) + boxR(squaren) + boxT(squaren) + boxB(squaren), wait=1, cmm="Boundaries", wait=1);
+
+// border(nn) means to create a border with nn vertices
+
+// mesh Th = buildmesh(reflector1up(5 * n) + reflector1down(5 * n) + reflector2(2 * n) + boxL(squaren) + boxT(squaren) + boxR(squaren) + boxB(squaren));
+mesh Th = buildmesh(boxL(squaren) + boxT(squaren) + boxR(squaren) + boxB(squaren));
+
+// Plot the generated domain mesh
+plot(Th, cmm="Finite element mesh", wait=1);
+
+// finite element space
+fespace Vh(Th, P1);
+Vh Phix, Phiy; // test function
+
+// initial conditions (plane wave)
+// the normal vector is aligned along the x-axis
+// i.e. n = [1, 0] so wavevector = [k, 0]
+// the amplitude vector E0 is aligned along the
+// y-axis i.e. E0 = [0, norm(E0)]
+func Ex0 = 0.0;
+func Ey0 = E0 * cos(k * x) * H(x, y);
+// initial first derivatives in time
+// (ignoring x-component because Ex0 = 0)
+func dEdTy0 = E0 * k * c * sin(k * x) * H(x, y);
+// initial second derivatives in time
+func dEdTdTy0 = -E0 * k^2 * c^2 * cos(k * x) * H(x, y);
+
+// Taylor approximation for E^(n-1) for initial condition
+func Ex0minus1 = 0.0;
+func Ey0minus1 = Ey0(x, y) - dEdTy0(x, y)*dt - 1/2 * dEdTdTy0(x, y)*dt^2;
+
+// Taylor approximation for E^(n+1) for initial condition
+func Ex0plus1 = 0.0;
+func Ey0plus1 = Ey0(x, y) + dt * dEdTy0(x, y) + dt^2 / 2 * dEdTdTy0(x, y);
+
+// finite element functions for the electric field
+// to be solved for
+// do NOT rename these as doing so will break
+// the macros
+Vh ExNow=Ex0, EyNow=Ey0; // to store the current iteration in time
+Vh ExNext=Ex0plus1, EyNext=Ey0plus1; // to store the (next) iteration in time being calculated
+Vh ExPrev=Ex0minus1, EyPrev=Ey0minus1; // to store the previous iteration in time
+Vh Emag=Ey0;
+
+// Array to store the solution for all times
+Vh[int] Efullx(tsteps);
+Vh[int] Efully(tsteps);
+
+// Plot the initial condition
+plot(EyNow, Now(E), coef=0.1, value=true, cmm="Initial condition (E field)", wait=1);
+
+problem ElectricField([ExNext, EyNext], [Phix, Phiy])
+    = int2d(Th)(
+        // Bilinear term 1
+        Vec(Phi)' * Next(E)/dt^2
+    )
+    + int2d(Th)(
+        // Bilinear term 2
+        c^2 * (Jnext(E) : J(Phi))
+    )
+    // + int1d(Th, 3)(
+    //     // Bilinear term 3
+    //     c * Vec(Phi)' * Next(E)/(2*dt)
+    // )
+    + int2d(Th)(
+        // Linear term 1
+        // the remaining parts of the time derivative
+        // are (confusingly) linear terms
+        Vec(Phi)' * Prev(E)/dt^2 - 2 * Vec(Phi)' * Now(E)/dt^2
+    );
+    // + int1d(Th, 3)(
+    //     // Linear term 2 - this is the remaining
+    //     // part of the boundary term time derivative
+    //     // (-1/c dE/dt)
+    //     c * Vec(Phi)' * Prev(E)/(2*dt)
+    // );
+
+for (int i = 0; i < tsteps; i++) {
+    // solve PDE for that timestep
+    ElectricField;
+    // plot
+    string epsfilename = "solutions/eps-efield/run" + saveiter + "/run" + saveiter + "frame" + i + ".eps";
+    Emag = abs(EyNow);
+
+    plot(Emag, Now(E), coef=0.1, value=true, fill=true, cmm="Electric field t = " + t);
+    // store current values
+    Efullx[i] = ExNow;
+    Efully[i] = EyNow;
+    // timestep
+    copy(Prev(E), Now(E));
+    copy(Now(E), Next(E));
+    t += dt;
+}

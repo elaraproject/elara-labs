@@ -1,0 +1,98 @@
+/* Written for FreeFEM++ v4.14 */
+
+// This is the scalar-valued validation test
+// that successfully demonstrates the solver
+// for the scalar-valued Helmholz PDE
+
+int top = 1;
+int right = 2;
+int bottom = 3;
+int left = 4;
+int all = 5;
+
+border boxtop(t=1, 0){ x=t; y=1; label=top; } // top
+border boxright(t=0, 1){ x=1; y=t; label=right; } // right
+border boxbottom(t=0, 1){ x=t; y=0; label=bottom; } // bottom
+border boxleft(t=1, 0){ x=0; y=t; label=left; } // left
+
+mesh Th = buildmesh(boxtop(120) + boxright(60) + boxbottom(80) + boxleft(100));
+plot(Th, value=1, wait=1);
+
+/*
+For values of k^2 = (n^2 + m^2) pi^2
+then the homogenous Dirichlet problem
+yields a solution even with
+E = 0 at the boundaries.
+
+For all other values of k, the Dirichlet
+problem (E = 0 at boundaries) yields a
+null solution, different boundary conditions
+are necessary instead.
+
+Here we use non-zero but constant-valued
+boundary conditions. This means the normal
+derivative is zero at each of the boundaries,
+so the boundary integral still vanishes.
+*/
+
+real ksquared = 9.0;
+
+fespace Vh(Th, P1);
+Vh TestPhi;
+Vh Emag;
+
+macro grad(u) [dx(u), dy(u)] //
+
+solve ElectricField(Emag, TestPhi)
+    = int2d(Th)(
+        -1* grad(Emag)' * grad(TestPhi)
+    )
+    + int2d(Th)(
+        ksquared * Emag * TestPhi
+    )
+    + on(top, Emag=10)
+    + on(right, Emag=1)
+    + on(bottom, Emag=3)
+    + on(left, Emag=6);
+
+// just to orient myself with the x and y axes
+func yf = (y-0.4)^2; // this is angled towards the y-axis so I will be able to tell
+Vh YfDisplay = yf;
+plot(YfDisplay, fill=true, dim=2, wait=1, cmm="Calibration test");
+plot(Emag, value=true, fill=true, dim=3, cmm="Electric field (spatial components)", wait=1, ps="solutions/research-report-1-finals/validation_redo.eps");
+
+func EmagAt = Emag(x, y);
+func int EvalEmag(real xcoord, real ycoord) {
+    real res = EmagAt(xcoord, ycoord);
+    cout << "On test point (" + xcoord + ", " + ycoord + "), result value " + res << endl;
+    return 0;
+}
+
+// a number of points to evaluate against for testing
+// against the python version
+
+// boundary points
+// we are always testing
+// in the middle of the boundary
+// because the edges are corners
+// and so are not good places for comparison
+EvalEmag(0, 0.5);
+EvalEmag(0.5, 0);
+EvalEmag(1, 0.5);
+EvalEmag(0.5, 1);
+// center points
+EvalEmag(0.25, 0.25);
+EvalEmag(0.5, 0.5);
+EvalEmag(0.75, 0.75);
+// some non-standard points
+EvalEmag(0.6, 0.);
+EvalEmag(0.55, 0.562);
+EvalEmag(0.663, 0.413);
+
+// possible error considerations:
+// - interpolation inaccuracies?
+// - a pretty big curvature between
+//   the boundaries where E = 10 and E = 1
+// in any case I consider it
+// non-ideal but sufficiently tolerable
+// for early research

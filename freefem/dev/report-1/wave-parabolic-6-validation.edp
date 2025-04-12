@@ -1,0 +1,101 @@
+// include "wavecommon.idp"
+// include "wavemeshxy.idp"
+
+int top = 1;
+int right = 2;
+int bottom = 3;
+int left = 4;
+int squaren = 20;
+
+border boxtop(t=1, 0){ x=t; y=1; label=top; }
+border boxright(t=0, 1){ x=1; y=t; label=right; }
+border boxbottom(t=0, 1){ x=t; y=0; label=bottom; }
+border boxleft(t=1, 0){ x=0; y=t; label=left; }
+
+plot(boxtop(squaren), cmm="Top border", wait=1);
+plot(boxright(squaren), cmm="Right border", wait=1);
+plot(boxbottom(squaren), cmm="Bottom border", wait=1);
+plot(boxleft(squaren), cmm="Left border", wait=1);
+
+mesh Th = buildmesh(boxtop(squaren) + boxright(squaren) + boxbottom(squaren) + boxleft(squaren));
+plot(Th, value=1, wait=1);
+
+func AnalyticalEx = (sin(2*pi*y) + cos(2*pi*y))*sin(pi*x);
+func AnalyticalEy = (sin(2*pi*x) + cos(2*pi*x))*sin(pi*y);
+func AnalyticalMag = sqrt(AnalyticalEx(x, y)^2 + AnalyticalEy(x, y)^2);
+
+fespace Vh(Th, P1);
+
+// finite element functions for the electric field
+// to be solved for
+// do NOT rename these as doing so will break
+// the macros
+Vh Ex, Ey;
+Vh ExactEx=AnalyticalEx, ExactEy=AnalyticalEy;
+Vh Phix, Phiy;
+Vh Emag;
+Vh ExactEmag=AnalyticalMag;
+Vh Errx, Erry;
+Vh Errmag;
+
+
+
+macro Vec(F) [F#x, F#y] //
+macro grad(u) [dx(u), dy(u)] //
+macro J(F) [grad(F#x), grad(F#y)] //
+macro magnitude(F) sqrt(F#x^2 + F#y^2) //
+
+real ksquared = 5 * pi^2;
+
+// Note: Helmholz equation = all bilinear terms
+problem ElectricField(Vec(E), Vec(Phi))
+    = int2d(Th)(
+        ksquared * Vec(E)' * Vec(Phi)
+    )
+    - int2d(Th)(
+        (J(E) : J(Phi))
+    )
+    // add in the nonzero dirichlet
+    // boundary conditions
+    // although - not sure these
+    // are necessary? they seem redundant?
+    + int1d(Th, top)(
+        Phix * pi * cos(pi*x)
+    )
+    + int1d(Th, bottom)(
+        Phix * pi * cos(pi*x)
+    )
+    + int1d(Th, left)(
+        Phiy * pi * cos(pi*y)
+    )
+    + int1d(Th, right)(
+        Phiy * pi * cos(pi*y)
+    )
+    // the dirichlet BC's
+    + on(left, Ex=0)
+    + on(right, Ex=0)
+    + on(top, Ey=0)
+    + on(bottom, Ey=0)
+    + on(top, Ex=sin(pi*x))
+    + on(bottom, Ex=sin(pi*x))
+    + on(left, Ey=sin(pi*y))
+    + on(right, Ey=sin(pi*y));
+
+// solve
+cout << "Solving PDE (script V5)..." << endl;
+ElectricField;
+
+// plot(Efield, value=true, fill=true, cmm="Electric field (spatial components)", ps=epsfilename);
+
+Emag = magnitude(E);
+Errx = Ex - AnalyticalEx;
+Erry = Ey - AnalyticalEy;
+Errmag = Emag - AnalyticalMag;
+
+plot(Emag, Vec(E), value=true, fill=true, dim=3, cmm="Electric field (spatial components x', y')", wait=1);
+
+plot(ExactEmag, Vec(ExactE), value=true, fill=true, dim=3, cmm="Electric field (analytical solution)", wait=1);
+
+plot(Errx, value=true, fill=true, cmm="Absolute difference from analytical solution (x-component)", wait=1);
+plot(Erry, value=true, fill=true, cmm="Absolute difference from analytical solution (y-component)", wait=1);
+plot(Errmag, value=true, fill=true, cmm="Absolute difference from analytical solution (magnitude)", wait=1);

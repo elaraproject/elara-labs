@@ -1,0 +1,16 @@
+[tool.poetry]
+package-mode = false
+name = "elara-labs"
+version = "0.1.0"
+description = "Home of Project Elara's experimental work"
+license = "Unlicense"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+itur = "^0.4.0"
+notebook = "^7.3.2"
+matplotlib = "^3.10.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

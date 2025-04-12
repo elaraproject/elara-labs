@@ -1,0 +1,105 @@
+include "wavecommon.idp"
+include "wavemeshxy.idp"
+
+// save mesh (if desired)
+if (!testrun && issavemesh) {
+    string postfix = "Efield";
+    string meshsavefile = "solutions/parabolic-mesh" + saveiter + postfix + ".msh";
+    savemesh(Th, meshsavefile);
+}
+
+// initial conditions (plane wave)
+// the normal vector is aligned along the x-axis
+// i.e. n = [1, 0] so wavevector = [k, 0]
+// the amplitude vector E0 is aligned along the
+// y-axis i.e. E0 = [0, norm(E0)]
+func Ex0 = 0.0;
+func Ey0 = E0 * cos(k * x) * H(x, y);
+// initial first derivatives in time
+// (ignoring x-component because Ex0 = 0)
+func dEdTy0 = E0 * k * c * sin(k * x) * H(x, y);
+// initial second derivatives in time
+func dEdTdTy0 = -E0 * k^2 * c^2 * cos(k * x) * H(x, y);
+
+// Taylor approximation for E^(n-1) for initial condition
+func Ex0minus1 = 0.0;
+func Ey0minus1 = Ey0(x, y) - dEdTy0(x, y)*dt - 1/2 * dEdTdTy0(x, y)*dt^2;
+
+// Taylor approximation for E^(n+1) for initial condition
+func Ex0plus1 = 0.0;
+func Ey0plus1 = Ey0(x, y) + dt * dEdTy0(x, y) + dt^2 / 2 * dEdTdTy0(x, y);
+
+// finite element functions for the electric field
+// to be solved for
+// do NOT rename these as doing so will break
+// the macros
+Vh ExNow=Ex0, EyNow=Ey0; // to store the current iteration in time
+Vh ExNext=Ex0plus1, EyNext=Ey0plus1; // to store the (next) iteration in time being calculated
+Vh ExPrev=Ex0minus1, EyPrev=Ey0minus1; // to store the previous iteration in time
+
+// Array to store the solution for all times
+Vh[int] Efullx(tsteps);
+Vh[int] Efully(tsteps);
+
+// Plot the initial condition
+plot(EyNow, Now(E), coef=0.1, value=true, cmm="Initial condition (E field)", wait=1);
+
+problem ElectricField([ExNext, EyNext], [Phix, Phiy])
+    = int2d(Th)(
+        // Bilinear term 1
+        Vec(Phi)' * Next(E)/dt^2
+    )
+    + int2d(Th)(
+        // Bilinear term 2
+        c^2 * (Jnext(E) : J(Phi))
+    )
+    + int1d(Th, 3)(
+        // Bilinear term 3
+        c * Vec(Phi)' * Next(E)/(2*dt)
+    )
+    + int2d(Th)(
+        // Linear term 1
+        // the remaining parts of the time derivative
+        // are (confusingly) linear terms
+        Vec(Phi)' * Prev(E)/dt^2 - 2 * Vec(Phi)' * Now(E)/dt^2
+    )
+    + int1d(Th, 3)(
+        // Linear term 2 - this is the remaining
+        // part of the boundary term time derivative
+        // (-1/c dE/dt)
+        c * Vec(Phi)' * Prev(E)/(2*dt)
+    );
+
+for (int i = 0; i < tsteps; i++) {
+    // solve PDE for that timestep
+    ElectricField;
+    // plot
+    string epsfilename = "solutions/eps-efield/run" + saveiter + "/run" + saveiter + "frame" + i + ".eps";
+    if (!testrun) {
+        plot(EyNow, Now(E), coef=0.1, value=true, fill=true, cmm="Electric field t = " + t, ps=epsfilename);
+    } else {
+        plot(EyNow, Now(E), coef=0.1, value=true, fill=true, cmm="Electric field t = " + t);
+    }
+    // store current values
+    Efullx[i] = ExNow;
+    Efully[i] = EyNow;
+    // timestep
+    copy(Prev(E), Now(E));
+    copy(Now(E), Next(E));
+    t += dt;
+}
+
+cout << "Saving solutions..." << endl;
+
+if (!testrun && issavesol) {
+    createsavefile(Esave);
+    for (int i = 0; i < tsteps; i++) {
+        for (int j = 0; j < Vh.ndof; j++) {
+            savesolution(Efull, Esave);
+        }   
+    }
+    // file automatically closed upon
+    // end of if block
+}
+
+cout << "Solving complete, solutions saved." << endl;
