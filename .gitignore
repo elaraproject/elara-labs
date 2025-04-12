@@ -43,3 +43,6 @@ MANIFEST
 log.txt
 *.swp
 *.swo
+
+# operating system stuff
+.DS_Store
