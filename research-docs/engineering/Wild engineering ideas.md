@@ -1,0 +1,11 @@
+These are speculative ideas but put here anyways according to our publishing ethos, see [[Open source knowledge]].
+
+### Ocean pumped hydro for receiver stations
+
+We can store energy in our massive oil rig-turned power receiving platforms by attaching massive (but hollow) concrete legs that we fill with hundreds of thousands of tons of water as ballast to keep them stable. We can design these to have multiple chambers/tanks. Now, what we can do is that we can use a portion of the power received from orbit to pump water to a high point, until the tanks are 80% or more full. Then, in case something happens and we need backup power to supply land power grids, we can generate electricity by letting that water out of the tanks through specialized spillways with water turbines, until the tanks drop to about 50% full. The gravitational potential energy of the water will be able to store a lot of energy, and releasing it will consequently be able to generate a lot of electricity, which we can either use as supplemental power to power the systems on the platforms OR use to generate liquid hydrogen that can be burnt in power plants and carried by docking ships.
+
+## Speculative mirror designs
+
+We can use use superconducting magnets to generate a strong magnetic field which can be used to circulate ionized xenon gas. The xenon ions are exposed to strong sunlight and circulate through the field until they glow blue-hot. They are arranged in such a fashion that the moving xenon ion cloud produces strong microwave emissions that are amplified in a resonant cavity, creating a very strong laser.
+
+Another idea is to disperse a very thin film of silver halide suspended in a heavy ionized gas (e.g. xenon/argon) trapped within a magnetic field that forms a "mirror" without needing a physical giant mirror, as the magnetic field keeps the silver atoms in place and in a parabolic arrangement. This would not work on Earth (due to atmospheric turbulence), but because space (at GSO orbit) is so empty, this may actually work in space.

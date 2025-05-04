@@ -46,3 +46,9 @@ log.txt
 
 # operating system stuff
 .DS_Store
+
+# obsidian metadata
+.obsidian
+
+# organizational/logistics info
+organization*/

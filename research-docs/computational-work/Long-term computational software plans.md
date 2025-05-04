@@ -1,0 +1,1 @@
+For Elara future, while we use Mathematica + MATLAB right now (especially for plotting data and making visualizations, which they are good at) we should slowly switch over to using [Mathics3](https://mathics.org/) + GNU Octave + [Sage](https://www.sagemath.org/) to replace these for Project Elara (which are open-source)

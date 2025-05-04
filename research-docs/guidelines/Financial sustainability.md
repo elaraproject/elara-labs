@@ -1,0 +1,3 @@
+We follow the model of sustainable investment pioneered by the Nobel foundation: https://nordsip.com/2025/02/17/nobel-foundation-sustainable-investment-overview/
+
+We will slowly add to the fund over time from personal earnings, from unused money from grants, from business backers, from schools, awards/cash prizes if we get them, until it is substantial enough that we can use sustainable investment to let the money for funding the project grow on its own. With interest, the money can grow, and with sustainable investment, we will (hopefully) be able to slowly become financially independent and not rely on any single backer.
