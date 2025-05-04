@@ -1,11 +1,24 @@
 ## Design of space-based maser
 
-We could do any of the following:
+Our objective is to create an optically-pumped maser that exclusively uses _focused sunlight_ as the pump source. This would require a large parabolic solar mirror to reflect and focus sunlight used for pumping the maser.
 
-- Easiest - pumpless [ammonia maser](https://bingweb.binghamton.edu/~suzuki/QuantumMechanicsFiles/7-3_Maser_physics.pdf). Since masers naturally work well in vacuum and cryogenic conditions (which naturally occurs in space) this is no issue.
-- Second-easiest - [microwave diode](https://www.ebay.com/itm/203511955893) pumped gas maser. This uses electricity from solar panels to power a microwave diode (e.g. tiny gunn diode), which produces the microwaves that excite atoms in the gain medium (e.g. water/ammonia/methanol), leading to stimulated emission
-- Hard but not impossible: [optically-pumped maser](https://www.nature.com/articles/nature25970#Sec2) pumped by a [laser diode powered by solar panels](https://www.jstage.jst.go.jp/article/lsj1973/23/3/23_3_244/_article/-char/en) or a NdCrYAG laser. [Laser diodes](https://en.wikipedia.org/wiki/Laser_diode) are very cheap, it's the optical maser part that's difficult.
-- Very hardest: optically-pumped maser that exclusively uses _focused sunlight_ as the pump source. This would require a large parabolic solar mirror to reflect and focus sunlight used for pumping the maser.
+### Possible promising idea: free electron maser
+
+This is the most promising idea so far: a free electron maser that uses a relativistic electron beam (like the type produced by a vacuum tube, a type of electron gun[^6]) as its gain medium. Free-electron masers are especially nice because they can be tuned to arbitrary frequency by simply varying the geometric properties of the maser. Furthermore, changing a vacuum tube to using concentrated sunlight as the anode heating source shouldn't be too hard, and the [gyrotron](https://en.wikipedia.org/wiki/Gyrotron) is an existing free-electron maser design that is already used for high-power fusion research. The only requirement is that we need strong permanent magnets, but those aren't too hard to buy.
+
+For more info see: [[Calculation of free electron maser parameters]]
+
+### Tested idea: solid-state optically-pumped maser
+
+There is already published research on creating an [optically-pumped solid-state maser](https://www.nature.com/articles/nature25970#Sec2) pumped by sunlight[^5]. If direct solar pumping is too difficult, we can also theoretically use a [laser diode powered by solar panels](https://www.jstage.jst.go.jp/article/lsj1973/23/3/23_3_244/_article/-char/en) or a NdCrYAG laser as a pump source.
+
+### Possible but un-verified idea: microwave diode pumped gas maser
+
+One possible idea is to use a [microwave diode](https://www.ebay.com/itm/203511955893) pumped gas maser. This uses electricity from solar panels to power a microwave diode (e.g. tiny gunn diode), which produces the microwaves that excite atoms in the gain medium (e.g. water/ammonia/methanol), leading to stimulated emission. The main issue is that we need to create a population inversion for lasing to occur (it must be a three-level or four-level maser), and additionally needing solar panels is a source of inefficiency.
+
+### Past idea: ammonia maser
+
+Initially we thought we could use a pumpless [ammonia maser](https://bingweb.binghamton.edu/~suzuki/QuantumMechanicsFiles/7-3_Maser_physics.pdf). Since ammonia masers naturally work well in vacuum and cryogenic conditions (which naturally occurs in space) this is no issue. However, ammonia masers are incredibly weak - nanowatts would be the typical power output, which makes the idea very impractical. The issue is that ammonia masers don't actually use any form of pumping; rather, an electric field separates ammonia molecules in a higher energy state from those in a lower energy state[^4]. As soon as the higher-energy ammonia molecules decay into the lower energy state, however, the upper state population must be restored. The photons emitted through the decays do help re-populate the upper state population, but this also takes away from the output power of the maser. Thus, ammonia masers are far, far too weak to be used.
 
 ### Past idea: radiative pumped astrophysically-inspred maser
 
@@ -35,3 +48,6 @@ Unfortunately, we found through some calculations and the literature that this d
 [^1]: https://arxiv.org/abs/1104.2306
 [^2]: https://en.wikipedia.org/wiki/Solar_furnace_of_Uzbekistan
 [^3]: https://link.springer.com/referenceworkentry/10.1007/978-3-642-11274-4_946
+[^4]: https://www.ehu.eus/documents/43252989/43253686/Ferez+PLANCKS+2022+solution.pdf/4a4d88c2-976e-5261-8a3d-5a47511620e2?t=1677789781459&download=true
+[^5]: https://www.nature.com/articles/nature11339
+[^6]: https://spark.iop.org/electron-guns

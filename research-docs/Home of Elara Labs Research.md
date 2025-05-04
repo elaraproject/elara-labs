@@ -8,6 +8,7 @@ Welcome! This is the Elara Labs research documentation. It is an [Obsidian](http
 [[Ideal laser beam divergence]]
 [[Parabolic reflector engineering]]
 [[Calculation of a hypothetical astrophysical-like artificial maser]]
+[[Calculation of free electron maser parameters]]
 
 ## Engineering/designs
 
