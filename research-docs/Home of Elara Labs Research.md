@@ -9,6 +9,7 @@ Welcome! This is the Elara Labs research documentation. It is an [Obsidian](http
 [[Parabolic reflector engineering]]
 [[Calculation of a hypothetical astrophysical-like artificial maser]]
 [[Calculation of free electron maser parameters]]
+[[Obtaining magnetic field strength]]
 
 ## Engineering/designs
 
