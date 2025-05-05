@@ -10,6 +10,8 @@ Welcome! This is the Elara Labs research documentation. It is an [Obsidian](http
 [[Calculation of a hypothetical astrophysical-like artificial maser]]
 [[Calculation of free electron maser parameters]]
 [[Obtaining magnetic field strength]]
+[[Vacuum tube Lorentz factor calculation]]
+
 
 ## Engineering/designs
 

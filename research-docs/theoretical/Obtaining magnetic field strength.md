@@ -1,3 +1,5 @@
+> **Note:** This experiment is probably not going to be done as it is far too imprecise. Using a true magnetic meter would probably be a far better idea.
+
 For the free electron maser design (see [[Calculation of free electron maser parameters]]) we will need to use strong permanent magnets for the undulator because on the real (proposed) spacecraft we'd want as few external power sources as possible (so power-hungry electromagnets are out of the question). As of the time of writing, we only have neodynium magnets, some of which have unknown field strengths. This means that in our experimental testing we need to be able to measure the strength of these magnets in our possession.
 
 Unfortunately, commercial magnetographers are rather expensive. But there is a relatively straightforward way to calculate the ambient field of a permanent magnet, just by invoking Faraday's law. We only need:

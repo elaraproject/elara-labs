@@ -18,4 +18,10 @@ $$
 \lambda_r = \dfrac{L_u}{2\gamma^2}\left(1 + \dfrac{1}{2}K^2\right)
 $$
 
-Where $\gamma$ is the Lorentz factor of the electrons, and $L_u, K$ are the same as their definitions, given before. Since we can tune $\gamma, L_u, B_0$ by varying the geometry and structure of the laser, we can essentially create whichever wavelength $\lambda_r$ we want.
+Where $\gamma$ is the Lorentz factor of the electrons, and $L_u, K$ are the same as their definitions, given before. From [[Vacuum tube Lorentz factor calculation]] we find that electron speeds close to 1/50th the speed of light are very possible. However, we would need $v/c \geq 0.5$ before the Lorentz factor becomes appreciably large, so it is reasonable to use the approximation $\gamma \approx 1$, for which we have:
+
+$$
+\lambda_r = \dfrac{L_u}{2}\left(1 + \dfrac{1}{2}K^2\right)
+$$
+
+Since we can tune $L_u, B_0$ by varying the geometry and make-up of the laser, we can essentially create whichever wavelength $\lambda_r$ we want, which is extremely useful.
