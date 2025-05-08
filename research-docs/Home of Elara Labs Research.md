@@ -17,6 +17,7 @@ Welcome! This is the Elara Labs research documentation. It is an [Obsidian](http
 
 [[Spacecraft engineering]]
 [[Parabolic reflector engineering]]
+[[Solar mirror engineering]]
 [[Satellite maser engineering]]
 [[Wild engineering ideas]]
 

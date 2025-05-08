@@ -1,0 +1,3 @@
+As the power satellites orbit in geostationary orbit, the solar mirror must be designed to reflect sunlight regardless of its orientation with respect to the Earth or the Sun. This means that the position of the solar mirror with respect to the transmitter satellite varies across the day, and the mirror must reflect light to an off-axis light inlet on the transmitting satellites, as shown in the diagram below:
+
+![[off-angle-laser-diagram.excalidraw|600]]
