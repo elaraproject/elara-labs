@@ -6,7 +6,9 @@ Our objective is to create an optically-pumped maser that exclusively uses _focu
 
 This is the most promising idea so far: a free electron maser that uses a relativistic electron beam (like the type produced by a vacuum tube, a type of electron gun[^6]) as its gain medium. Free-electron masers are especially nice because they can be tuned to arbitrary frequency by simply varying the geometric properties of the maser. Furthermore, changing a vacuum tube to using concentrated sunlight as the anode heating source shouldn't be too hard, and the [gyrotron](https://en.wikipedia.org/wiki/Gyrotron) is an existing free-electron maser design that is already used for high-power fusion research. The only requirement is that we need strong permanent magnets, but those aren't too hard to buy.
 
-For more info see: [[Calculation of free electron maser parameters]]
+For Project Elara, the main challenge is to make the laser **purely optically-powered**, that is, purely powered by the concentrated sunlight, and as high-efficiency as possible. That is something we need to do a lot of work on.
+
+For more info see: [[Calculation of free electron maser parameters]] and [[Free-electron maser physics]]
 
 ### Tested idea: solid-state optically-pumped maser
 
