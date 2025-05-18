@@ -1,0 +1,3 @@
+Tutorials and guides on `elara-labs` are intended to act as supporting research documentation, but are not meant to be exhaustive or comprehensive in nature. Unlike the Handbook, they assume considerable prior knowledge of physics, and omit a lot of details. The Handbook, by contrast, is meant to be _educational_ and explain things step-by-step.
+
+Elara-labs does **not** hold research papers and reports, but their supporting code, technical documentation, and resources. Papers are instead relegated to separate git repositories in their own right, that are deployed via Github actions for continuous integration, and linked to the website. As such, no papers or drafts of papers should be put here.
