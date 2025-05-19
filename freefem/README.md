@@ -8,6 +8,6 @@ FreeFem++ some_script_to_run.edp
 
 Here, we use the `dev/` and `release/` folders to distinguish between finished code and prototyping code. Subfolders in each of those folders correspond to a specific simulation task, which we show in the table below:
 
-| Subfolder in `dev/` and `release` | Published report |
+| Subfolder in `dev/` and `release` | Published location (if applicable) |
 |-------|-----|
-| `report-1/` | [2024 Research Report 1](https://elaraproject.github.io/research/html/elara-research-report-2024-latest.html) (same graphs re-used in [2024 Project Technical Overview 1](https://elaraproject.github.io/research/html/elara-overview-2024-latest.html)) |
+| `report-1/` | [2024 Research Report](https://elaraproject.github.io/2024-research-report/) |
