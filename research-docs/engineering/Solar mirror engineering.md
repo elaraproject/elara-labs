@@ -20,6 +20,12 @@ A better solution, then, is to consider a more advanced mirror configuration, wh
 
 ![[sun-facing design.excalidraw|800]]
 
-While this approach is technologically-complex (since it requires an additional secondary mirror as well as two gimbal-mounted output couplers and a mechanism to continuously turn the mirror very precisely), it allows the primary mirror to be facing the Sun and oriented parallel to the Sun's rays, making the best use of the solar irradiance.
+While this approach is technologically-complex (since it requires an additional secondary mirror as well as two gimbal-mounted output couplers and a mechanism to continuously turn the mirror very precisely), it allows the primary mirror to be facing the Sun and oriented parallel to the Sun's rays, making the best use of the solar irradiance. **This is the design we are currently going for**.
+
+### Other design considerations
+
+We spoke previously about the difficulties involved with reaction wheels and similar mechanisms. One promising technology that may solve many issues with reaction wheels is to use [magnetically-suspended reaction wheels](https://ntrs.nasa.gov/citations/19760012100), which, to quote the linked NASA paper, offers _"low drag torque, wearfree, unlubricated, vacuum-compatible operation, and unlimited life"_. 
+
+Additionally, to protect the sensitive electronics in gimbal-mounted output couplers from being damaged by cosmic rays and micrometeorite impacts, it may be a good idea to use a [radome](https://en.wikipedia.org/wiki/Radome). Radomes are transparent to long-wavelength electromagnetic radiation (presumably including microwaves) but can provide much-needed shielding for the maser output couplers; otherwise, micrometeorites, which can have the kinetic energy of a bullet (if not more), can seriously damage the output couplers.
 
 [^1]: See https://en.wikipedia.org/wiki/Irradiance
