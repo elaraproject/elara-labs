@@ -12,7 +12,7 @@ $$
 I = \langle \mathbf{S}\rangle \cos \alpha
 $$
 
-Where $\mathbf{S}$ is the Poynting vector and $\langle \mathbf{S}\rangle$ denotes its time-averaged value. Since the axial tilt $\theta_a$ of the Earth is about $\theta_a = 23.4 \degree$ and $\cos(\theta_a) \approx 0.92$, we lose about 8% of solar irradiance (and thus 8% of the power we could collect) using this method, which is obviously not ideal. There is also a bigger problem, and this is with the idea of using an opening in the mirror itself. To understand this
+Where $\mathbf{S}$ is the Poynting vector and $\langle \mathbf{S}\rangle$ denotes its time-averaged value. Since the axial tilt $\theta_a$ of the Earth is about $\theta_a = 23.4 \degree$ and $\cos(\theta_a) \approx 0.92$, we lose about 8% of solar irradiance (and thus 8% of the power we could collect) using this method, which is obviously not ideal. There is also the problem of using an opening in the mirror itself, which further restricts available space, especially with the transmitter sunlight already blocking part of the light. All said, this design could be much-improved.
 
 ## A more sophisticated solution
 
