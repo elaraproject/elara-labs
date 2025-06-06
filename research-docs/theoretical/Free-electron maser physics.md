@@ -168,6 +168,8 @@ $$
 
 Finding the roots of the expression (it can be done numerically) allows choosing a suitable material for the output coupler, based on a desired transmittance (again, this is the fraction of light/microwaves that is allowed to pass through). In practice, the output coupler will most likely require additional optics instead of being just a single mirror, probably including one or more lenses. However, as a start, we can use this relatively simple theoretical result.
 
+> **Note:** The other limitation with this result is that it doesn't take into account the fact that the index of refraction is actually a _function of wavelength_, so technically-speaking, $n_2 = n_2(\lambda)$ where $\lambda$ is the wavelength of the incident radiation.
+
 ## Modelling techniques
 
 In this section, we will discuss a general overview of the techniques to model the undulator. For our purposes, we consider free-electron masers that use only permanent magnets.
