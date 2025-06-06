@@ -75,7 +75,7 @@ $$
 
 We can derive this from the Airy diffraction formula $\sin \theta = \dfrac{1.22 \lambda}{D_\text{aperture}}$. It is useful to consult the below diagram for this derivation:
 
-![[diffraction-limit.excalidraw]]
+![[diffraction-limit.excalidraw.svg]]
 
 To get our desired result, we just need to perform some algebra. The derivation is as follows:
 

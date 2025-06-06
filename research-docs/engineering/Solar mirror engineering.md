@@ -4,7 +4,7 @@ One critically-important part of the entire design is the shape, material compos
 
 A "simple" solution to the issue can be for the mirror to have a "hole" at its center so that sunlight can travel right through to an off-axis light inlet on the transmitting satellites, as shown in the diagram below:
 
-![[off-angle-laser-diagram.excalidraw|600]]
+![[off-angle-laser-diagram.excalidraw.svg|600]]
 
 However, this approach is wasteful, because it means that the mirrors will always be at an angle with respect to the Sun. Recall that the irradiance $I$ - that is, the power density of light - is given by[^1]:
 
@@ -18,7 +18,7 @@ Where $\mathbf{S}$ is the Poynting vector and $\langle \mathbf{S}\rangle$ denote
 
 A better solution, then, is to consider a more advanced mirror configuration, where, instead of just one mirror, we have a primary mirror (the big parabolic reflector) and a secondary mirror, where the transmitter satellite is located at the root of the primary mirror. This is a common configuration in large reflecting telescopes on Earth. In addition, the mirror is continually turned so that it always faces the Sun. This approach is much more challenging, since turning the mirror requires more complex station-keeping and perhaps reaction wheels to turn the mirrors. (Alternative turning approaches, such as pre-spinning the mirrors on launch, may be a viable alternative, since reaction wheel failures are a common cause of spacecraft malfunctions). Additionally, the transmitter satellites will need _two_ gimbal-mounted output couplers, one behind and one in front of the satellite; they will use their front output coupler during points in the orbit when the mirror is *behind* the Earth, and switch to their back output coupler during points in the orbit when the mirror is _in front of_ the Earth. We illustrate this in the diagram below:
 
-![[sun-facing design.excalidraw|800]]
+![[sun-facing design.excalidraw.svg|800]]
 
 While this approach is technologically-complex (since it requires an additional secondary mirror as well as two gimbal-mounted output couplers and a mechanism to continuously turn the mirror very precisely), it allows the primary mirror to be facing the Sun and oriented parallel to the Sun's rays, making the best use of the solar irradiance. **This is the design we are currently going for**.
 
@@ -42,7 +42,7 @@ $$
 E(\theta) = \dfrac{2\lambda}{\pi D} \dfrac{J_1[(\pi D/\lambda)\sin \theta]}{\sin \theta}
 $$
 
-Where $J_1(\theta)$ is a [Bessel function of the 1st kind](https://en.wikipedia.org/wiki/Bessel_function#Bessel_functions_of_the_first_kind:_J%CE%B1), $D$ is the diameter of the mirror, and of course $\lambda$ is the wavelength. This is an idealized solution that doesn't account for the non-idealized reflectivity of the mirror, or scattering effects due to the (albeit small) protrusions of the gimbal-mounted output coupler and light inlet of the transmitter satellite, see [[sun-facing design.excalidraw]]. It also doesn't account for the material properties of the mirror, which plays an essential role in how the mirror reflects (and scatters) light. [This photonics paper](https://www.mdpi.com/2304-6732/10/7/848) works out the physics for a better theoretical model.
+Where $J_1(\theta)$ is a [Bessel function of the 1st kind](https://en.wikipedia.org/wiki/Bessel_function#Bessel_functions_of_the_first_kind:_J%CE%B1), $D$ is the diameter of the mirror, and of course $\lambda$ is the wavelength. This is an idealized solution that doesn't account for the non-idealized reflectivity of the mirror, or scattering effects due to the (albeit small) protrusions of the gimbal-mounted output coupler and light inlet of the transmitter satellite, see [[sun-facing design.excalidraw.svg]]. It also doesn't account for the material properties of the mirror, which plays an essential role in how the mirror reflects (and scatters) light. [This photonics paper](https://www.mdpi.com/2304-6732/10/7/848) works out the physics for a better theoretical model.
 
 However, to incoporate all the effects, analytical techniques will be limited, and we must use numerical simulations to solve the Helmholtz equation on a computer. This is especially difficult when we are working with actual CAD models rather than idealized mathematical models, where it is impossible calculate an exact solution by hand; analytical solutions are better-purposed as a way to sanity-check our numerical solutions.
 

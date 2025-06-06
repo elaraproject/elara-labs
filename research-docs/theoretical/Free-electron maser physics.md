@@ -23,7 +23,7 @@ As the electron beam exits from the electron source, it is directed by **bending
 
 In an undulator, magnets are arranged in alternating order - the first magnet and the second magnet have oppositely-aligned poles, likewise for the third and fourth magnet, and so forth, as shown in the diagram below:
 
-![[free-electron-laser.excalidraw|600]]
+![[free-electron-laser.excalidraw.svg|600]]
 
 This arrangement of magnets leads to a magnetic field that exerts a force perpendicular to the direction of the electron beam.
 

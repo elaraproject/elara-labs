@@ -1,6 +1,6 @@
 Let us consider a solar satellite orbiting in geostationary orbit, which is located at a distance of around 35,000 km. Because a geostationary satellite always orbits above the equator (which we call its _orbital plane_), and the Earth is tilted, the Earth's shadow does _not_ actually block sunlight. We have a diagram below to show this:
 
-![[solar-availability-calculation.excalidraw|600]]
+![[solar-availability-calculation.excalidraw.svg|600]]
 
 Because the Earth's rotational axis is tilted by an angle of $\phi \approx 23.44 \degree$, the geostationary orbit lies above a straight-line plane drawn through an Earth (known as the _plane of reference_). We can in fact calculate its height above the reference plane as follows. Using trigonometry, it is possible to show that the satellite's angle of elevation $\theta_\text{sat}$ above the reference plane satisfies $\theta_\text{sat} = \phi_e$. We may derive this as follows: since the Earth's axis is perpendicular to the satellite's orbital plane, while a vertical line through the Earth is perpendicular to the plane of reference. Thus:
 

@@ -16,7 +16,7 @@ Unfortunately, commercial magnetographers are rather expensive. But there is a r
 
 We present the experimental apparatus here:
 
-![[measurement-magnetic-field.excalidraw|300]]
+![[measurement-magnetic-field.excalidraw.svg|300]]
 
 The theory behind it is straightforward. Recall that by Faraday's law, the potential difference due to a changing magnetic flux is given by:
 

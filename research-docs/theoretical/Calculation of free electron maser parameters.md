@@ -4,7 +4,7 @@ The free-electron maser consists of an electron beam (produced by something like
 
 The relativistic electron beam from the vacuum tube then passes through the undulator, where the magnetic field causes the electrons to "wiggle" and emit [synchrotron radiation](https://en.wikipedia.org/wiki/Synchrotron_radiation) (which can be tuned to be in the microwave wavelengths). The undulator is enclosed by two mirrors on either end, creating an optical cavity (much like that of any other laser) that (long story short) creates a collimated beam of photons. We show this below:
 
-![[free-electron-laser.excalidraw|800]]
+![[free-electron-laser.excalidraw.svg]]
 
 The free-electron maser can be _precisely tuned_ to a desired wavelength, because it doesn't rely on atomic transitions - instead, it relies on the radiation emitted by the relativistic electrons, and the geometric and magnetic characteristics of the undulator. The undulator strength is often expressed with the dimensionless constant $K$, given by:
 
