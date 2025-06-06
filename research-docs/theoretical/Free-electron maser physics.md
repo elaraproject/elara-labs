@@ -31,11 +31,11 @@ Synchrotron radiation...
 
 At the end, the electron beam is deflected away from the undulator via bending magnets (as shown above); it is possible to recover some of the energy of the electron beam as the electrons decelerate[^4]. Afterwards, the electrons are deposited onto a large block of dense, heat-resistant material, called a [beam dump](https://en.wikipedia.org/wiki/Beam_dump#Charged-particle_beam_dumps).
 
-### Optical pumping
+### Optical power
 
-For our space-based application, we require that our lasers be **optically-pumped**: that is, entirely (or near-entirely) powered purely by sunlight. A microwave beam is 
+For our space-based application, we require that our lasers be **optically-powered**: that is, entirely (or near-entirely) powered purely by sunlight. This requires some modifications from the standard free-electron maser design:
 
-
+- The power source for the electron source is sunlight, which heats the cathode
 
 ### Cathode temperature
 
@@ -57,7 +57,7 @@ $$
 T = \left(\dfrac{I}{\varepsilon \sigma}\right)^{1/4} = \left(\dfrac{I_\odot}{\varepsilon \sigma} \right)^{1/4} \sqrt{\dfrac{R}{a}}
 $$
 
-Letting $a = \pu{10 cm}$ and $R = \pu{1m}$, and assuming a tungsten plate (which has emissivity $\varepsilon = 0.27$[^1]), we find that the plate is heated to a temperature of approximately $\pu{1726 K}$, or about 1500 degrees Celsius - far more than enough to cause the [thermionic emission](https://en.wikipedia.org/wiki/Thermionic_emission) of electrons from a hot cathode. There are also other materials that are especially-suited for cathodes, such as [Barium oxide](https://pubchem.ncbi.nlm.nih.gov/compound/Barium-oxide), and can thus produce better-quality electron beams.
+Letting $a = \pu{10 cm}$ and $R = \pu{1m}$, and assuming a tungsten plate (which has emissivity $\varepsilon = 0.27$[^11]), we find that the plate is heated to a temperature of approximately $\pu{1726 K}$, or about 1500 degrees Celsius - far more than enough to cause the [thermionic emission](https://en.wikipedia.org/wiki/Thermionic_emission) of electrons from a hot cathode. There are also other materials that are especially-suited for cathodes, such as [Barium oxide](https://pubchem.ncbi.nlm.nih.gov/compound/Barium-oxide), and can thus produce better-quality electron beams.
 
 > **Note:** The theoretical maximum temperature is around 3,600K - this is due to the fact that this is very close to the melting point of tungsten, which is well-known for having the highest melting point of all known elements. While sunlight can be focused to higher temperatures, and [ultra-high temperature ceramics](https://en.wikipedia.org/wiki/Ultra-high_temperature_ceramic) can withstand higher temperatures of up to 4,300K, these materials do not seem(?) to generally be suitable for making cathodes, so 3,600K is a suitable approximation as a theoretical maximum.
 
@@ -131,7 +131,9 @@ In physical terms, the photoelectric effect contributes to the total electron be
 
 ### Maintaining a cathode-anode voltage
 
-We plan to use a thermocouple as the voltage source to maintain the potential difference between the anode and the cathode. The advantage is that a thermocouple involves no moving parts and has been used to power spacecraft (such as the Voyager space probes) for decades, using the decay heat of radioactive isotopes with a thermocouple to generate electricity. A thermocouple works by the Seebeck effect, where a potential difference (EMF) is induced across a material with a temperature difference acrosss its ends due to the [thermoelectric effect](https://en.wikipedia.org/wiki/Thermoelectric_effect). The EMF a thermocouple produces can be approximated by the equation:
+#### Option 1: Thermocouples
+
+One idea is to use a thermocouple as the voltage source to maintain the potential difference between the anode and the cathode. The advantage is that a thermocouple involves no moving parts and has been used to power spacecraft (such as the Voyager space probes) for decades, using the decay heat of radioactive isotopes with a thermocouple to generate electricity. A thermocouple works by the Seebeck effect, where a potential difference (EMF) is induced across a material with a temperature difference acrosss its ends due to the [thermoelectric effect](https://en.wikipedia.org/wiki/Thermoelectric_effect). The EMF a thermocouple produces can be approximated by the equation:
 
 $$
 \Delta V = -S \Delta T
@@ -139,17 +141,36 @@ $$
 
 where $S$ is the _Seebeck coefficient_ of a particular material, and $\Delta T$ is the temperature gradient (difference between the temperatures of the hot and cold sides of the thermocouple). The advantage of being in space is that the temperature in the vacuum of outer space is just $\pu{2.7 K}$, meaning that the temperature gradient can be in the thousands of kelvin.
 
-If we assume a selenium thermocouple that is attached on one side to the hot tungsten cathode. Using our previous figure of $\pu{1726.72 K}$ for a hot tungsten cathode, and using the fact that the Seebeck coefficient of selenium is $\pu{895 \mu V/K}$[^2], we arrive at a figure of an EMF of around $\pu{1.5 V}$ - not substantial, but sufficient to power the electron beam, and definitely enough to accelerate the electrons to substantial velocities (remember: electrons have _tiny_ mass, so even a weak potential can cause a lot of acceleration to an electron!) With more specialized materials (specifically certain types of specialized semiconductors), we may be able to do better - for instance, high-temperature oxides (such as $\ce{CH3NH3PbI3(MAPbI3)}$) can have Seebeck coefficients up to $\pu{1693 \pm 146 \mu V \cdot K^{-1}}$[^8], which, combined with a tungsten cathode heated to $\pu{3600 K}$ with concentrated sunlight, may allow reaching an EMF up to $\pu{6V}$.
+If we assume a selenium thermocouple that is attached on one side to the hot tungsten cathode. Using our previous figure of $\pu{1726.72 K}$ for a hot tungsten cathode, and using the fact that the Seebeck coefficient of selenium is $\pu{895 \mu V/K}$[^2], we arrive at a figure of an EMF of around $\pu{1.5 V}$ - not substantial, but sufficient to power the electron beam, and definitely enough to accelerate the electrons to substantial velocities (remember: electrons have _tiny_ mass, so even a weak potential can cause a lot of acceleration to an electron!) With more specialized materials (specifically certain types of specialized semiconductors), we may be able to do better - for instance, high-temperature oxides (such as $\ce{CH3NH3PbI3(MAPbI3)}$) can have Seebeck coefficients up to $\pu{1693 \pm 146 \mu V \cdot K^{-1}}$[^8], which, combined with a tungsten cathode heated to $\pu{3600 K}$ with concentrated sunlight, may allow reaching an EMF up to $\pu{6V}$. Of course, we wouldn't have just one thermocouple; we'd want an array of thermocouples, which can then be able to produce an EMF somewhere in the range of $\pu{30V}$ to $\pu{100 V}$ (the low end is about the EMF of the thermocouples from the NASA Mars Perseverance rover[^12]).
 
-> **Note:** Yes, we can choose to use a [radioisotope thermoelectric generator](https://en.wikipedia.org/wiki/Radioisotope_thermoelectric_generator) (RTG) instead for generating the potential difference without relying on any (onboard) electrical power source, or even more exotic devices such as [betavoltaic batteries](https://en.wikipedia.org/wiki/Betavoltaic_device) or [stirling radioisotope generators](https://en.wikipedia.org/wiki/Stirling_radioisotope_generator).
+#### Option 2: Electrets
 
-### Output coupling
+Electrets are materials that have a permanent electrical polarization that gives them a permanent electric dipole moment. This means that electrets produce an electrostatic field, just as permanent magnets produce a magnetostatic field without needing a current source. In theory, if we make the anode and cathode out of electrets, this should mean that we can sustain a potential difference _without_ needing to resort to thermocouples or other power sources. Electrets have been demonstrated[^13] to maintain a potential difference of up to $\pu{1.618 kV}$ which should be well more than enough to create a successful electron beam. However, more familiarity with electrets are necessary before we can consider them as a workable option.
 
-Talk about the Fresnel equations and the transmittance coefficient to identify suitable materials for the half-transparent mirror via their refractive index.
+#### More exotic options
 
-## Undulator modelling
+ In theory, we can choose to use a [radioisotope thermoelectric generator](https://en.wikipedia.org/wiki/Radioisotope_thermoelectric_generator) (RTG) instead for generating the potential difference without relying on any (onboard) electrical power source, or even more exotic devices such as [betavoltaic batteries](https://en.wikipedia.org/wiki/Betavoltaic_device) or [stirling radioisotope generators](https://en.wikipedia.org/wiki/Stirling_radioisotope_generator). These are not going to function forever, but can potentially work for 50+ years, or with better technology, perhaps more than a century.
 
-In this section, we will discuss a general overview of the techniques to model the undulator. For our purposes, we consider free-electron masers that use only permanent magnets
+### Output coupler
+
+The output coupler is essentially a half-transparent mirror that allows some light (in our case, microwaves) to pass through, and is located on one of the ends of the maser. It is the output coupler that is responsible for creating the maser's beam. Thus, an output coupler is the classical example of a scattering problem for an electromagnetic wave through optical media. In less technical terms, it is the question of determining what fraction of the light (in our case, microwaves) incident on a material passes through that material. The solution is given by the classical [Fresnel equations](https://en.wikipedia.org/wiki/Fresnel_equations), which give the **transmittance** $T$ of light (the percentage of light that  passes from one medium to a second medium) as follows:[^14]
+
+$$
+T = 1 - \left|\dfrac{n_1 - n_2}{n_1 + n_2}\right|^2 = \dfrac{4n_1n_2}{(n_1 + n_2)^2}
+$$
+
+Where $n_1$ is the refractive index of the media the light _came from_, and $n_2$ is the refractive index of the material the light is _entering into_ (in our case, our light is in the form of microwaves).
+In our case, since the interior of the free-electron maser is in vacuum (like everything else in the laser), we have $n_1 = 1$. Thus, our expression simplifies to:
+
+$$
+T = \dfrac{4n_2}{(1 + n_2)^2}
+$$
+
+Finding the roots of the expression (it can be done numerically) allows choosing a suitable material for the output coupler, based on a desired transmittance (again, this is the fraction of light/microwaves that is allowed to pass through). In practice, the output coupler will most likely require additional optics instead of being just a single mirror, probably including one or more lenses. However, as a start, we can use this relatively simple theoretical result.
+
+## Modelling techniques
+
+In this section, we will discuss a general overview of the techniques to model the undulator. For our purposes, we consider free-electron masers that use only permanent magnets.
 
 ### A review of magnetic materials
 
@@ -207,9 +228,27 @@ $$
 
 Analytical solutions are quite hard to find, but let us attempt an analytical solution with some simplifying assumptions. We assume that the interior of the undulator is a perfect vacuum (which is a reasonable assumption given that it is a vacuum chamber anyway) and that the distance between adjacent magnets is (relatively) small.
 
-### Beam modelling
+### The free-electron maser equations
 
-The field inside the undulator
+We can now put everything together to derive a set of equations to describe the free-electron maser. We start from the quasistatic approximation, where we assume that we can write the magnetic field in terms of a purely spatial component $\mathbf{B}_u$ (for the field of the undulator magnets), as well as a radiative component $\mathbf{B}_\text{rad}$, that is:
+
+$$
+\mathbf{B} = \mathbf{B}_u(\mathbf{r}) + \mathbf{B}_\text{rad}(\mathbf{r}, t)
+$$
+
+Using all our previous results, we obtain the following system of equations for the free-electron maser:
+
+$$
+\begin{gather*}
+\nabla \cdot (-\mu_0 \nabla \psi_m + \mathbf{M}) = 0 \\
+\mathbf{B}_u = -\nabla \psi_m \\
+\nabla \times \mathbf{E} = -\dfrac{\partial \mathbf{B}_\text{rad}}{\partial t} \\
+\nabla \times (\mathbf{B}_u + \mathbf{B}_\text{rad}) = -\mu_0 n \mathbf{v}_e e\, t + \dfrac{1}{c^2} \dfrac{\partial \mathbf{E}}{\partial t} \\
+\dot{\mathbf{v}}_e = -(e/m_e)(\mathbf{E} + \mathbf{v}_e \times \mathbf{B})
+\end{gather*}
+$$
+
+Where $e$ is the magnitude (absolute value) of the electron charge, $\mathbf{B}_u$ is the undulator field, $\mathbf{B}_\text{rad}$ is the radiative magnetic field, $\mathbf{E}$ is the electric field in the cavity, $n$ is the electron density, $m_e$ is the electron mass, $\mathbf{v}_e$ is the electron velocity, and $\mathbf{M}, \psi_m$ are the magnetization and magnetic scalar potential of the undulator (permanent) magnets.
 
 ## Maser performance characteristics
 
@@ -237,6 +276,10 @@ Calculate:
 
 - Heat generated by maser
 
+### Laser gain
+
+
+
 ## Free electron masers vs. gyrotrons
 
 Gyrotrons are incredibly similar to free-electron masers.
@@ -251,3 +294,7 @@ Gyrotrons are incredibly similar to free-electron masers.
 [^8]: See Ye et. al. (2017), https://pubs.rsc.org/en/content/articlehtml/2017/tc/c6tc04594d
 [^9]: See Wang and Yu (2023), _Principles of photocatalysis_, _"Solar spectrum"_, https://www.sciencedirect.com/science/article/abs/pii/B9780443187865000020
 [^10]: See [this Physics SE answer](https://physics.stackexchange.com/questions/340592/photoelectric-effect-how-can-number-of-electrons-emitted-be-independent-of-freq/340648#340648)
+[^11]: From a [table of emissivity values](https://www.design1st.com/Design-Resource-Library/engineering_data/ThermalEmissivityValues.pdf)
+[^12]: According to the [official NASA documentation](https://mars.nasa.gov/internal_resources/788/) on the RTG of the [Perseverance rover](https://science.nasa.gov/mission/mars-2020-perseverance/)
+[^13]: According to [section 2.1 of this paper](https://advanced.onlinelibrary.wiley.com/doi/full/10.1002/advs.202203150)
+[^14]: See the [associated Wikipedia article](https://en.wikipedia.org/wiki/Fresnel_equations#Power_(intensity)_reflection_and_transmission_coefficients). We assume normal incidence as the electromagnetic waves in a laser propagate almost exclusively parallel to the optical axis.
