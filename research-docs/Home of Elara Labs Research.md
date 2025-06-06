@@ -3,6 +3,8 @@ Welcome! This is the Elara Labs research documentation. It is an [Obsidian](http
 
 > **Note:** Be aware that since this vault uses a lot of [Excalidraw drawings](https://excalidraw.com/), you need to install the [Obsidian Excalidraw plugin](https://github.com/zsviczian/obsidian-excalidraw-plugin/) to be able to view them.
 
+> **Important information for researchers:** Pages in this markdown vault should be **archived** when developed to a level of sufficient detail and completeness to be ported directly to the Elara Handbook. For this, a deprecation/archival notice should be added to the top of the page, stating that the content has been moved to the Handbook and the version currently within the repository is now archived.
+
 ## Calculations
 
 [[Solar availability at geostationary orbit]]
@@ -26,6 +28,10 @@ Welcome! This is the Elara Labs research documentation. It is an [Obsidian](http
 ## Prototyping and experimental testing
 
 [[Project Elara first light design]]
+
+## Helpful resources and guides
+
+[[Resources and tools]]
 
 ## Guidelines
 
