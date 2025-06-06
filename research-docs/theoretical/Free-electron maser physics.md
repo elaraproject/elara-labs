@@ -228,7 +228,107 @@ $$
 \mathbf{B} = \mu_0 (\mathbf{H} + \mathbf{M}), \quad \mathbf{H} = -\nabla \psi_m
 $$
 
-Analytical solutions are quite hard to find, but let us attempt an analytical solution with some simplifying assumptions. We assume that the interior of the undulator is a perfect vacuum (which is a reasonable assumption given that it is a vacuum chamber anyway) and that the distance between adjacent magnets is (relatively) small.
+Analytical solutions are quite hard to find, and in most cases, cannot be found. We will need to do numerical methods in general for precise modelling. However, we can use a simple theoretical mode as a first approximation: the **dipole model**.
+
+### The dipole model
+
+The dipole model is a very basic approximate model for the magnetic field in an undulator. It models permanent magnets as magnetic dipoles. This assumption is made by assuming that the separation $d$ between the magnets at the top and bottom of the undulator is large compared to the cross-sectional width of the magnets, so the magnets can be thought of as point-like.
+
+Let us select a coordinate system where $y$ be the direction the magnets are pointing and $x$ be the direction of the particle beam. The undulator is composed of pairs of north-north and south-south facing magnets, arrayed along the $x$ axis: let us choose just a single pair to begin our analysis. Each pair is separated by distance $d$, where we let the electron beam be along $y = \frac{d}{2}$ and the two magnets be placed at $(0,0,0)$ and $(0,d,0)$ respectively.
+
+Recall that the magnetic field of a single magnet with constant magnetization $\mathbf{m}$ could be approximated as a perfect dipole at distances "far" from the magnet, which has a magnetic field given by:
+
+$$
+\mathbf{B} = \dfrac{\mu_0}{4\pi} \left[\dfrac{3\mathbf{r}(\mathbf{m} \cdot \mathbf{r})}{r^5}- \dfrac{\mathbf{m}}{r^3}\right]
+$$
+
+The magnetic moments $\mathbf{m}$ of the pair of magnets are identical (both facing along either $y$ or $-y$, and of the same magnitude). We will consider a pair facing along $y$ to begin our analysis. Previously, we have already found that:
+
+$$
+\mathbf{m} = \dfrac{1}{\mu_0} B_r V\hat{\mathbf{y}}
+$$
+
+Where $B_r$ is the magnetic remanence (an intrinsic material property) of the magnet, and $V$ is the magnet's volume.
+
+> **Note:** We adjusted the previously-derived formula $\mathbf{m} = \frac{1}{\mu_0} B_r V\hat{\mathbf{x}}$ since the magnetic fields and therefore magnetic moments of the magnets are aligned along $y$.
+
+We now apply more simplifying assumptions: namely, that since the magnets are "far" from each other and from the electron beam, then the $1/r^5$ term drops off rapidly and can be effectively ignored. In addition, since the magnetic moment of the magnets are on the axis between the magnets (that is, along $y$, the direction), the magnetic field would be primarily concentrated along $y$ as well, so we can effectively ignore $B_x, B_z$. This leaves us with:
+
+$$
+\begin{align}
+\mathbf{B} &= \dfrac{\mu_0}{4\pi} \left[\dfrac{3\mathbf{r}(\mathbf{m} \cdot \mathbf{r})}{r^5}- \dfrac{\mathbf{m}}{r^3}\right] \\
+&\approx -\dfrac{\mu_0}{4\pi} \dfrac{\mathbf{m}}{r^3} \\
+B_x = B_z \approx 0, &\quad  B_y \approx -\dfrac{\mu_0}{4\pi} \dfrac{\|\mathbf{m}\|}{(x^2 + y^2 + z^2)^\frac{3}{2}}
+\end{align}
+$$
+
+Using this approximation, the magnetic fields of the upper magnet and lower magnets in the pair are therefore, respectively:
+
+$$
+\begin{align}
+\mathbf{B}_{y,\text{ upper}} &= -\dfrac{\mu_0}{4\pi} \dfrac{\|\mathbf{m}\|}{(x^2 + z^2)^\frac{3}{2}} \\
+\mathbf{B}_{y,\text{ lower}} &= -\dfrac{\mu_0}{4\pi} \dfrac{\|\mathbf{m}\|}{\left(x^2 + z^2 + \left(y - d\right)^2\right)^\frac{3}{2}}
+\end{align}
+$$
+
+And by the superposition principle, their combined field is given by:
+
+$$
+B_y = -\dfrac{\mu_0}{4\pi} \|\mathbf{m}\| \left(\dfrac{1}{(x^2 + z^2)^\frac{3}{2}} + \dfrac{1}{\left(x^2 + z^2 + \left(y - d\right)^2\right)^\frac{3}{2}}\right)
+$$
+
+At $y = d/2$, which is the position of the electron beam, we therefore have:
+
+$$
+\begin{align}
+B_y(x, d/2, z) &= -\dfrac{\mu_0}{4\pi} \|\mathbf{m}\| \left(\dfrac{1}{(x^2 + z^2)^\frac{3}{2}} + \dfrac{1}{\left(x^2 + z^2 + \left(- \frac{d}{2}\right)^2\right)^\frac{3}{2}}\right) \\
+&= -\dfrac{\mu_0}{4\pi} \|\mathbf{m}\| \left(\dfrac{1}{(x^2 + z^2)^\frac{3}{2}} + \dfrac{1}{\left(x^2 + z^2 + \frac{d^2}{4}\right)^\frac{3}{2}}\right) \\
+\end{align}
+$$
+
+We can now use the approximation that $d$ is very large compared to $x, z$, so we have:
+
+$$
+\dfrac{1}{\left(x^2 + z^2 + \frac{d^2}{4}\right)^\frac{3}{2}} \approx \dfrac{1}{\left(\frac{d^2}{4}\right)^{3/2}} = \dfrac{8}{d^3}
+$$
+
+And at $(0, d/2, z)$, that is, right between the two magnets, where the electron beam is located, we find that:
+
+$$
+B_y = -\dfrac{\mu_0}{4\pi}\|\mathbf{m}\| \left(\dfrac{1}{z^3} + \dfrac{8}{d^3}\right) 
+$$
+
+While this expression becomes infinite (and thus unphysical) at $z = 0$, showcasing the limitations of our model, we note that $1/z^3$ rapidly decays by the inverse cube of the distance, so even at a small (but nonzero) distance $z$ we have $1/z^3 \approx 0$. Therefore, we may approximate the ambient field as:
+
+$$
+\begin{align}
+B_y &= -\dfrac{\mu_0}{4\pi}\|\mathbf{m}\| \left(\dfrac{1}{z^3} + \dfrac{8}{d^3}\right) \\
+&\approx -\dfrac{\mu_0}{4\pi}\|\mathbf{m}\| \dfrac{8}{d^3} \\
+&\approx -\dfrac{\mu_0}{2\pi d^3}\|\mathbf{m}\|
+\end{align}
+$$
+
+Now using $\mathbf{m} = \dfrac{1}{\mu_0} B_r V\hat{\mathbf{y}}$, we obtain the ambient field strength between the magnets:
+
+$$
+\begin{align}
+B_y &= -\dfrac{\mu_0}{2\pi d^3} \left(\dfrac{1}{\mu_0} B_r V\right) \\
+&= -\dfrac{B_r V}{2\pi d^3}
+\end{align}
+$$
+
+This yields field strengths of about 1/1000th of a Tesla - not ideal at all, at least for magnets of a small volume. However, recognize that this is only the case for large $d$, meaning that the paired magnets are far apart from each other. If the two magnets are brought close to each other, the dipole approximation breaks down; however, if we make the approximation of _small_ $d$, or at least where at least one dimension of the magnet's geometry is roughly equal to $d$, then we have $V \approx d^3$, giving us
+
+$$
+\begin{align}
+B_y &= -\dfrac{B_r V}{2\pi d^3} \\
+&\approx -\dfrac{B_r d^3}{2\pi d^3} \\
+&\approx -\dfrac{B_r}{2\pi} \\
+&\approx -\dfrac{1}{6} B_r
+\end{align}
+$$
+
+From which we may obtain fairly high field strengths of $\pu{0.15T - 0.25T}$. Note that if one of the dimensions is greater than $\sqrt[3]{6} \approx 1.8$ times the separation distance $d$, then we have $B_y \approx -B_r$ and we can achieve very high field strengths of up to $\pu{1 T}$ or even more.
 
 ### The free-electron maser equations
 
