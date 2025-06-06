@@ -9,7 +9,7 @@ Elara Labs is the current centralized repository where the majority of Project E
 
 Our latest (and frequently experimental) work is typically put here; when we are satisfied with the results, we publish our work on [Elara Handbook](https://elaraproject.github.io/elara-handbook/) (and our paces other places, like arXiv (TBA) and our website). 
 
-**Documentation:** see the [research docs](research-docs/README.md) for our research documentation.
+**Documentation:** see the [research docs](research-docs/README.md) for our research documentation. The docs can also be viewed online at the [Elara Labs documentation website](https://publish.obsidian.md/elara-labs)
 
 > Everything in Elara Labs is released to the **public domain** like the rest of [Project Elara](https://github.com/elaraproject/), meaning it is essentially **unlicensed research/software**, so you can use it for basically any project you want, _however_ you want, with or without attribution.
 

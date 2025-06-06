@@ -1,5 +1,5 @@
 ![[elara-logo.png|400]]
-Welcome! This is the Elara Labs research documentation. It is an [Obsidian](https://obsidian.md) vault that contains our work, all open-sourced. You can run this locally by downloading the Obsidian software, and opening it as a vault.
+Welcome! This is the Elara Labs research documentation. It is an [Obsidian](https://obsidian.md) vault that contains our work, all open-sourced. You can run this locally by downloading the Obsidian software, and opening it as a vault. It is also viewable online on the [Elara Labs documentation website](https://publish.obsidian.md/elara-labs).
 
 > **Note:** Be aware that since this vault uses a lot of [Excalidraw drawings](https://excalidraw.com/), you need to install the [Obsidian Excalidraw plugin](https://github.com/zsviczian/obsidian-excalidraw-plugin/) to be able to view them.
 
