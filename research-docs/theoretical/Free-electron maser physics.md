@@ -6,7 +6,7 @@ Unlike regular lasers, free-electron masers do not operate on creating a populat
 
 ### General design principles
 
-A free-electron maser is composed of two parts: first, an electron source, and second, an undulator (also called a _wiggler_). Unlike "true" masers, which are fundamentally quantum devices, a free electron maser operates according to classical principles. The basic mode of operation is as follows: the electron source creates an electron beam by some method of accelerating electrons. The electron source does this by applying a high temperature by some means to a positively-charged cathode, leading to the emission of electrons via [thermionic emission](https://en.wikipedia.org/wiki/Thermionic_emission). Then, a negatively-charged anode attracts the electrons liberated from the material, with the resultant potential difference between the cathode and anode accelerating electrons to incredibly fast speeds (up to relativistic speeds, in fact). An opening in the anode allows the free electrons to exit the anode, becoming an **electron beam**. Then, the electron beam is passed into the undulator, whereby its interaction with a magnetic field causes the emission of microwave radiation. Much like a traditional laser, an undulator has mirrors on either end: perfectly reflective on one end, and partially-reflective on the other end (called the _output coupling mirror_), amplifying the microwaves
+A free-electron maser is composed of two parts: first, an electron source, and second, an undulator (also called a _wiggler_). Unlike "true" masers, which are fundamentally quantum devices, a free electron maser operates according to classical principles. The basic mode of operation is as follows: the electron source creates an electron beam by some method of accelerating electrons. The electron source does this by applying a high temperature by some means to a positively-charged cathode, leading to the emission of electrons via [thermionic emission](https://en.wikipedia.org/wiki/Thermionic_emission). Then, a negatively-charged anode attracts the electrons liberated from the material, with the resultant potential difference between the cathode and anode accelerating electrons to incredibly fast speeds (up to relativistic speeds, in fact). An opening in the anode allows the free electrons to exit the anode, becoming an **electron beam**. Then, the electron beam is passed into the undulator, whereby its interaction with a magnetic field causes the emission of microwave radiation. Much like a traditional laser, an undulator has mirrors on either end: perfectly reflective on one end, and partially-reflective on the other end (called the _output coupling mirror_ or alternatively just _output coupler_), which reflect the microwaves back and forth, allowing only a small portion of the microwaves through.
 
 
 ![A diagram of a general free-electron maser](https://ars.els-cdn.com/content/image/1-s2.0-S0030399212003118-gr1.jpg)
@@ -19,23 +19,156 @@ The simplest type of electron source is a [vacuum tube](https://en.wikipedia.org
 
 #### Design and working mechanism of the undulator
 
-As the electron beam exits from the electron source, it is directed by **bending magnets** into the undulator (which is the part that actually produces microwaves). The bending magnets are essentially just two magnets of opposite poles that create an effective magnetic field $\mathbf{B} = B_0 \hat z$. By the Lorentz force law, this leads to an acceleration of $\mathbf{a} = -(|e|vB_0/m) \hat y$ on the electrons (where $e$ is the electron charge, $m_e$ is the electron mass), leading the beam to curve into the undulator.
+The undulator is where the "magic" of the maser happens. In highly-simplified terms, an undulator is a device that uses a particular arrangement of magnets to cause an electron beam to take a "wiggling" path, thus emitting radiation (like microwaves) as the electrons oscillate back and forth. However, that is too simple for our purposes: we need to take a closer look.
 
-In an undulator, magnets are arranged in alternating order - the first magnet and the second magnet have oppositely-aligned poles, likewise for the third and fourth magnet, and so forth, as shown in the diagram below:
+A free electron maser's undulator can be decomposed into several parts. The first part is the electron beam, which enters the undulator from the electron source, guided by bending magnets. The bending magnets are essentially just two magnets of opposite poles that create an effective magnetic field $\mathbf{B} = B_0 \hat z$. By the Lorentz force law, this leads to an acceleration of $\mathbf{a} = -(vB_0/m) \hat y$ on the electrons (where $e$ is the magnitude electron charge and is positive, and $m$ is the electron mass), leading the beam to curve into the undulator.
+
+Inside the undulator, there are two rows of magnets, arranged in alternating order - the first magnet and the second magnet have oppositely-aligned poles, likewise for the third and fourth magnet, and so forth, as shown in the diagram below:
 
 ![[free-electron-laser.excalidraw.svg|600]]
 
-This arrangement of magnets leads to a magnetic field that exerts a force perpendicular to the direction of the electron beam.
+This arrangement of magnets leads to a magnetic field that exerts a force perpendicular to the direction of the electron beam. More strictly speaking, since this magnetic field is produced by the permanent magnets, it is a _magnetostatic_ (time-independent) field - more on this later. This field can be approximated by[^15]:
 
-Synchrotron radiation...
+$$
+B_x = B_z = 0, \quad B_y = B_0 \sin k_0 x
+$$
 
-At the end, the electron beam is deflected away from the undulator via bending magnets (as shown above); it is possible to recover some of the energy of the electron beam as the electrons decelerate[^4]. Afterwards, the electrons are deposited onto a large block of dense, heat-resistant material, called a [beam dump](https://en.wikipedia.org/wiki/Beam_dump#Charged-particle_beam_dumps).
+Where $B_0$ is the peak magnetic field amplitude, and $k_0 = 2\pi/L_u$ is the wavenumber (a common alternate notation is to use $\lambda_u$ instead of $L_u$, leading to the perhaps more familiar-looking formula $k_0 = 2\pi/\lambda_u$). One may write the peak amplitude $B_0$ in terms of a parameter $K$ (the "wiggler strength"), which is given by:
 
-### Optical power
+$$
+B_0 = \dfrac{k_0 mc^2}{e} K
+$$
+
+From the Lorentz force equation for the magnetic field, $\mathbf{F} = q(\mathbf{v} \times \mathbf{B})$, where $\mathbf{F} = (m \ddot z) \hat z$, the path of the electron beam can be found to be[^15]:
+
+$$
+z = z_0 \sin (k_0 x)
+$$
+
+> **Note:** Indeed, this is not the fully relativistic Lorentz force, which is given by $\mathbf{F} = \dfrac{d}{dt}(\gamma m \mathbf{v})$, but we will use $\mathbf{F} \approx m\mathbf{a} = (m \ddot z) \hat z$ as a approximation.
+
+Where $z_0$ is the maximum transverse displacement (displacement along the $z$ axis) of the electron beam as it travels in a sinusoidal path. Since the electrons in the electron beam are moving back and forth ("wiggling") as they travel through the magnetic fields of the undulator magnets, they emit **synchrotron radiation** in the form of electromagnetic waves, which have the associated fields:
+
+$$
+\begin{align}
+\mathbf{E}_\text{rad.}(\mathbf{r}, t) &= \dfrac{1}{4\pi \varepsilon_0} \dfrac{e}{c^2 r}\mathbf{a}_\perp \\
+\mathbf{B}_\text{rad.}(\mathbf{r}, t) &= \dfrac{1}{c} \hat r \times \mathbf{E}_\text{rad}(\mathbf{r}, t)
+\end{align}
+$$
+
+Here, $r$ is the _retarded distance_ (in this context "retarded" means "delayed", as electromagnetic waves take time to travel), $e$ is the magnitude of the electron charge, and $\mathbf{a}_\perp$ is the _transverse acceleration_ of the electrons (we will derive these formulas later). Since the transverse acceleration is caused by the magnetostatic field $B_y$ of the undulator magnets (which creates an acceleration along the $z$ axis by the right-hand rule), $\mathbf{E}_\text{rad.}$ must therefore be (primarily) aligned along the $z$ axis, so we may write:
+
+$$
+E_{z \text{ (rad.)}} = -\dfrac{1}{4\pi \varepsilon_0} \dfrac{e}{c^2 r}\left(-\dfrac{e}{m}v_xB_y\right)
+$$
+
+As these electromagnetic waves travel outwards, they bounce off the mirrors at the end of the maser's optical cavity, and become reflected back and forth. Thus, at distances "far" from the electron beam (again, "far" is relative), the outward-radiating electric fields form **standing waves** in the cavity, of the form:
+
+$$
+\begin{gather}
+\mathbf{E}_{m,n,j} = \mathbf{E}_0\sin \left(\dfrac{n\pi z}{L_z}\right) \sin \left(\dfrac{m\pi y}{L_y}\right) \sin \left(\dfrac{j\pi x}{L_x}\right) \cos \omega t,\\
+\omega = \sqrt{\left(\frac{n\pi}{L_z}\right)^2 + \left(\frac{m\pi}{L_y}\right)^2 + \left(\frac{j\pi}{L_y}\right)^2}
+\end{gather}
+$$
+
+Where $L_x, L_z$ and $L_y$ are the length, width, and height of the optical cavity, respectively, and $m, n, j$ are integers. By the superposition principle, the total field in the cavity is then given by the sum of the radiated waves from each of the electrons:
+
+$$
+\mathbf{E}_\text{cavity}(\mathbf{r},t) = \mathbf{E}_0 \sum_{n, m, j} \sin \left(\dfrac{n\pi z}{L_z}\right) \sin \left(\dfrac{m\pi y}{L_y}\right) \sin \left(\dfrac{j\pi x}{L_x}\right) \cos \omega t
+$$
+
+> **Note:** Something to be careful about is that the fields $\mathbf{E}_\text{rad.}, \mathbf{B}_\text{rad.}$ describe the _near-field_ behavior of the electromagnetic waves (synchrotron radiation) whereas $\mathbf{E}_\text{cavity}$ describes the _far-field_ behavior as the synchrotron radiation propagates "far away" from the wiggling electrons. Again, "far away" is a very relative term - since electrons are very very small compared to the size of the cavity, the $\mathbf{E}_\text{cavity}$ field is the dominant field for all but the shortest distances from the electron beam.
+
+At this point, the standing waves are still **incoherent** (not in-phase), because while the possible modes of the electric field are restricted to those of integer $m, n, k$, each electron produces standing waves with a different phase, so the overall field $\mathbf{E}_\text{cavity}$ is not in-phase. However, with some time, the standing waves in the cavity build up and become strong enough to exert a force back on the electrons in the electron beam. As this force comes from the reflected radiation previously emitted by the electrons themselves, we may choose to call it the _recoil force_. This recoil force exerts a force _back_ on the electrons, causing some to oscillate more rapidly and some to oscillate rapidly, until the oscillations of all of the electrons are in-phase (or at least close to being all in-phase). Thus the electromagnetic waves become **coherent** (in-phase), and the electric fields of the propagating radiation becomes:
+
+$$
+\mathbf{E}(\mathbf{r}, t) = \mathbf{E}_0  \psi(x, z) \sin \left(\dfrac{2\pi x}{\lambda_r}\right) \cos \omega t 
+$$
+
+Where $\psi(x, z)$ is the **beam profile** that describes the beam cross-sectional "shape", and $\lambda_r$ is the the wavelength of the emitted radiation, which is given by:
+
+$$
+\lambda_r = \dfrac{L_u}{2\gamma^2} \left(1 + \dfrac{K^2}{2}\right) \approx \dfrac{1}{2} L_u \left(1 + \dfrac{K^2}{2}\right) \quad (\gamma \ll 1)
+$$
+
+In the ideal case, $\mathbf{E}(\mathbf{r}, t)$ becomes a perfect [Gaussian beam](https://en.wikipedia.org/wiki/Gaussian_beam), where the beam profile $\psi \sim e^{-(x^2 + z^2)}$ becomes a Gaussian. We show a plot of the intensity profile (time-averaged power density) of the electromagnetic field below:
+
+![A plot of the intensity (energy density) profile of a Gaussian beam](https://upload.wikimedia.org/wikipedia/commons/f/ff/Gaussian_beam_w40mm_lambda30mm.png)
+
+_Credit: [Wikipedia](https://commons.wikimedia.org/wiki/File:Gaussian_beam_w40mm_lambda30mm.png)_
+
+The electromagnetic waves then pass out through the half-transparent mirror at one end of the free-electron maser, which creates the maser beam. Meanwhile, the electron beam is deflected away from the undulator via bending magnets (as shown previously); it is possible to recover some of the energy of the electron beam as the electrons decelerate[^4], before the slowed-down electrons are deposited onto a large block of dense, heat-resistant material, called a [beam dump](https://en.wikipedia.org/wiki/Beam_dump#Charged-particle_beam_dumps), bringing them to a final stop.
+
+#### Derivation of the synchrotron radiation formula
+
+The general expressions for the fields of a moving charge can be found by solving the (fully-relativistic) Maxwell equations, and are given by[^16]:
+
+$$
+\begin{align}
+\mathbf{E}(\mathbf{r}, t) &= {\frac {q}{4\pi \varepsilon_{0}}}\left({\frac {(\mathbf{n}_s-{\boldsymbol {\beta }}_{s})}{\gamma ^{2}(1-\mathbf{n}_s\cdot {\boldsymbol {\beta }}_{s})^{3}|\mathbf {r} -\mathbf {r} _{s}|^{2}}}+{\frac {\mathbf{n}_s\times {\big (}(\mathbf{n}_s-{\boldsymbol {\beta }}_{s})\times {\dot {{\boldsymbol {\beta }}}_{s}}{\big )}}{c(1-\mathbf{n}_s\cdot {\boldsymbol {\beta }}_{s})^{3}|\mathbf {r} -\mathbf {r} _{s}|}}\right) \Bigg|_{t=t_{r}} \\
+\mathbf{B}(\mathbf{r}, t) &= \frac{\mathbf{n}_s(t_{r})}{c}\times \mathbf {E} (\mathbf{r} ,t) \\
+\boldsymbol {\beta }_s &= \mathbf{v}_s/c, \\
+t_r &= t - |\mathbf{r} - \mathbf{r}_s|/c,\\
+\mathbf{n}_s(t) &= \dfrac{\mathbf{r}-\mathbf{r}_s(t)}{|\mathbf{r}-\mathbf{r}_s(t)|}, \\
+\gamma &= \dfrac{1}{\sqrt{1 - |\boldsymbol {\beta }_s|^2}}
+\end{align}
+$$
+
+Where $\gamma$ is the Lorentz factor, $\mathbf{r}_s = \mathbf{r}_s(t)$ is the position of the charge, $\mathbf{n}_s$ is the unit vector pointing from $\mathbf{r}_s$ to $\mathbf{r}$, $\mathbf{v}_s$ is the velocity of the charge, and $t_r$ is the **retarded time** ("retarded" is an archaic term that means "delayed", since electromagnetic fields take time to propagate due to the finite speed of light). All quantities in the brackets for the electric field are evaluated at the retarded time $t_r$. In the case of synchrotron radiation, the acceleration of the charges is purely perpendicular to their velocity $\mathbf{v}_s$ (and thus also perpendicular to their position $\mathbf{r}_s$). This means that the charge has no acceleration in its _direction of motion_ and *only* acceleration _perpendicular_ to its direction of motion. 
+
+We are specifically interested in the _radiated electromagnetic waves_ produced by the accelerated charge. Note how the first term in the expression for the electric field falls off as $\frac{1}{|\mathbf{r} - \mathbf{r}_s|^2}$ whereas the second term falls off as $\frac{1}{|\mathbf{r} - \mathbf{r}_s|}$, meaning that the first portion of the field decays quickly and thus cannot contribute to electromagnetic waves that radiate far from their source[^17] ("far" being a relative term considering that charged particles like electrons can be _tiny_). Thus, we can effectively ignore the first term when analyzing the radiation of accelerating charges, leaving us with:
+
+$$
+\mathbf{E}(\mathbf{r}, t)={\frac {q}{4\pi \varepsilon_{0}}}\left(\frac {\mathbf{n}_s\times {\big (}(\mathbf{n}_s-{\boldsymbol {\beta }}_{s})\times {\dot {{\boldsymbol {\beta }}}_{s}}{\big )}}{c(1-\mathbf{n}_s\cdot {\boldsymbol {\beta }}_{s})^{3}|\mathbf {r} -\mathbf {r} _{s}|}\right) \Bigg|_{t=t_{r}}
+$$
+
+We can clean up the notation by defining $r = |\mathbf{r}-\mathbf{r}_s(t_r)|$ and $\hat r = \mathbf{n}_s(t_r)$. This allows us to write a more elegant expression, as follows:
+
+$$
+\mathbf{E} = \dfrac{q}{4\pi \varepsilon_0} 
+\dfrac{1}{r}\left(\dfrac{\hat r \times (\hat r - \boldsymbol{\beta}_s) \times \dot{\boldsymbol{\beta}}_s}{c(1 - \hat r \cdot \boldsymbol{\beta}_s)^3}\right)
+$$
+
+In the case of synchrotron radiation, since the charge is accelerating *transverse* (perpendicular) to its direction of motion, we thus denote the acceleration by $\mathbf{a} = \mathbf{a}_\perp$. And since $\boldsymbol{\beta} = \mathbf{v}_s/c$, we have $\dot{\boldsymbol{\beta}}_s = \dot{\mathbf{v}}/c = \mathbf{a}_\perp /c$. This allows us to write:
+
+$$
+\mathbf{E}(\mathbf{r}, t) = \dfrac{q}{4\pi \varepsilon_0} 
+\dfrac{1}{c^2r}\left(\dfrac{\hat r \times (\hat r - \boldsymbol{\beta}_s) \times \mathbf{a}_\perp}{(1 - \hat r \cdot \boldsymbol{\beta}_s)^3}\right)
+$$
+
+Expanding out the cross product, we have $\hat r \times (\hat r - \boldsymbol{\beta}_s) = -\hat r \times \boldsymbol{\beta}_s$, so we have:
+
+$$
+\mathbf{E}(\mathbf{r}, t) = -\dfrac{q}{4\pi \varepsilon_0} 
+\dfrac{1}{c^2r} \dfrac{(\hat r \times \boldsymbol{\beta}_s) \times \mathbf{a}_\perp}{(1 - \hat r \cdot \boldsymbol{\beta}_s)^3}
+$$
+
+Now, since $\hat r$ is the (retarded) unit vector, it must have unit magnitude. Assuming that we are examining the _transverse_ radiation of the field (most electromagnetic waves we encounter are transverse waves), then $\hat r$ and $\boldsymbol{\beta}_s$ are _nearly_ perpendicular, so $\hat r \cdot \boldsymbol{\beta}_s \approx 0$ and $(1 - \hat r \cdot \boldsymbol{\beta}_s)^3 \approx 1$. By the same reasoning, $|\hat r \times \boldsymbol{\beta}_s| \approx 1$, and thus we can simplify to[^16]:
+
+$$
+\mathbf{E}(\mathbf{r}, t) = -\dfrac{1}{4\pi \varepsilon_0} \dfrac{q}{c^2 r}\mathbf{a}_\perp, \quad \mathbf{B} = \dfrac{1}{c} \hat r \times \mathbf{E}(\mathbf{r}, t)
+$$
+
+Where it is important to note that this is shorthand for:
+
+$$
+\begin{gather}
+\mathbf{E}(\mathbf{r}, t) = -\dfrac{1}{4\pi \varepsilon_0} \dfrac{q}{c^2 |\mathbf{r} - \mathbf{r}_s(t_r)|}\mathbf{a}_\perp(t_r), \\
+t_r = t - \dfrac{|\mathbf{r} - \mathbf{r}_s|}{c}, \\
+\hat r = \dfrac{\mathbf{r} - \mathbf{r}_s(t_r)}{|\mathbf{r} - \mathbf{r}_s(t_r)|}
+\end{gather}
+$$
+
+(Here we must be careful to note that $\mathbf{a}_\perp(t_r)$ means the transverse acceleration _evaluated at_ the retarded time, that is, $\mathbf{a}_\perp$ is a _function_ of retarded time). An interactive visualization can be found [on Desmos](https://www.desmos.com/3d/lszl4fwhxo).
+
+## Optical-powered maser technology
 
 For our space-based application, we require that our lasers be **optically-powered**: that is, entirely (or near-entirely) powered purely by sunlight. This requires some modifications from the standard free-electron maser design:
 
-- The power source for the electron source is sunlight, which heats the cathode
+- The power source for the electron source is sunlight, which heats the cathode, causing both thermionic and photoelectric emission of electrons
+- All magnets must be permanent magnets, so that the maser does not need to use energy-hungry electromagnets that would need to be powered by an external source
+
+In the following sections, we will give a basic discussion of the physics of an optically-powered free-electron maser that could work as a space-based power transmission system.
 
 ### Cathode temperature
 
@@ -189,6 +322,8 @@ $$
 \end{align*}
 $$
 
+> **Note:** This is the explanation behind why permanent magnets can only form magnetostatic fields, which we mentioned earlier.
+
 Since the $\mathbf{H}$ field now has zero curl, it is now a conservative field, which, from a theorem in vector calculus means that it can be written in terms of a potential, called the **magnetic scalar potential** $\psi_m$, by the expression:
 
 $$
@@ -332,29 +467,79 @@ From which we may obtain fairly high field strengths of $\pu{0.15T - 0.25T}$. No
 
 ### The free-electron maser equations
 
-We can now put everything together to derive a set of equations to describe the free-electron maser. We start from the quasistatic approximation, where we assume that we can write the magnetic field in terms of a purely spatial component $\mathbf{B}_u$ (for the field of the undulator magnets), as well as a radiative component $\mathbf{B}_\text{rad}$, that is:
+We can now put everything together to derive a set of equations to describe the free-electron maser. First, we write the magnetic field as the sum of a purely spatial component $\mathbf{B}_u$ (for the field of the undulator magnets) and a radiative component $\mathbf{B}_r$ (for the electromagnetic radiation emitted by the moving electrons). This does not require any approximations since we know that the magnets are permanent magnets, so $\mathbf{B}_u$ is necessarily time-independent. Thus we have:
 
 $$
-\mathbf{B} = \mathbf{B}_u(\mathbf{r}) + \mathbf{B}_\text{rad}(\mathbf{r}, t)
+\mathbf{B} = \mathbf{B}_u(\mathbf{r}) + \mathbf{B}_r(\mathbf{r}, t)
 $$
 
-Using all our previous results, we obtain the following system of equations for the free-electron maser:
+By contrast, since no static electric fields are present within the maser's optical cavity, so we consider the electric field to be a purely radiative field $\mathbf{E}_r$, that is:
+
+$$
+\mathbf{E} = \mathbf{E}_r(\mathbf{r}, t)
+$$
+
+The magnetostatic field $\mathbf{B}_u$ can be found via solving for the magnetic scalar potential $\psi_m$, from which $\mathbf{H}_u = -\nabla \psi_m$, and $\mathbf{B}_u = \mu_0 (\mathbf{H}_u + \mathbf{M})$. The radiative fields, however, require the time-dependent Maxwell's equations. From Faraday's law, we have:
+
+$$
+\begin{align}
+\nabla \times \mathbf{E} &= \nabla \times \mathbf{E}_r \\
+&= -\dfrac{\partial \mathbf{B}}{\partial t} \\
+&= -\dfrac{\partial}{\partial t}\big(\cancel{\mathbf{B}_u(\mathbf{r})} + \mathbf{B}_r(\mathbf{r}, t)\big) \\
+&= -\dfrac{\partial \mathbf{B}_r}{\partial t}
+\end{align}
+$$
+
+Meanwhile, for Ampere's law, we have:
+
+$$
+\begin{align}
+\nabla \times \mathbf{B} &= \nabla \times (\mathbf{B}_u + \mathbf{B}_r) \\
+&= \mu_0 \mathbf{J} + \dfrac{1}{c^2}\dfrac{\partial \mathbf{E}}{\partial t}
+\end{align}
+$$
+
+We can write out the current density term using the same current density term used to derive the radiation of a moving point charge from the [Liénard–Wiechert potentials](https://en.wikipedia.org/wiki/Li%C3%A9nard%E2%80%93Wiechert_potential)[^18]:
+
+$$
+\mathbf{J} = q\mathbf{v}_s \delta^3(\mathbf{r} - \mathbf{r}_s(t_r)), \quad t_r \equiv t_r = t - \dfrac{|\mathbf{r} - \mathbf{r}_s|}{c}
+$$
+
+Where we must be careful to use the _retarded time_ $t_r$ for both the position $\mathbf{r}_s$ and velocity $\mathbf{v}_s$ of the charge, that is, $\mathbf{r}_s = \mathbf{r}_s(t_s)$ and $\mathbf{v}_s = \mathbf{v}_s(t_s)$. Finally, we have the relativistically-correct version of the Lorentz force law:
+
+$$
+\begin{align}
+\dfrac{d}{dt}(\gamma m\mathbf{v}_s) 
+&= q(\mathbf{E} + \mathbf{v}_s \times \mathbf{B}) \\
+&= q(\mathbf{E}_r + \mathbf{v}_s(t_r) \times (\mathbf{B}_u + \mathbf{B}_r))
+\end{align}
+$$
+
+Collecting all our previous results, we obtain the following system of differential equations for the free-electron maser, where we solve for the trajectory $\mathbf{r}_s(t)$ of the electron beam, as well as the static ($\mathbf{B}_u$) and radiative ($\mathbf{E}_r, \mathbf{B}_r$) fields:
 
 $$
 \begin{gather*}
 \nabla \cdot (-\mu_0 \nabla \psi_m + \mathbf{M}) = 0 \\
-\mathbf{B}_u = -\nabla \psi_m \\
-\nabla \times \mathbf{E} = -\dfrac{\partial \mathbf{B}_\text{rad}}{\partial t} \\
-\nabla \times (\mathbf{B}_u + \mathbf{B}_\text{rad}) = -\mu_0 n \mathbf{v}_e e\, t + \dfrac{1}{c^2} \dfrac{\partial \mathbf{E}}{\partial t} \\
-\dot{\mathbf{v}}_e = -(e/m_e)(\mathbf{E} + \mathbf{v}_e \times \mathbf{B})
+\mathbf{B}_u = \mu_0 (\mathbf{M} - \nabla \psi_m) \\
+\nabla \times \mathbf{E}_r = -\dfrac{\partial \mathbf{B}_r}{\partial t} \\
+\nabla \times (\mathbf{B}_u + \mathbf{B}_r) = -\mu_0 e \mathbf{v}_s(t_r) \delta^3(\mathbf{r} - \mathbf{r}_s(t_r)) + \dfrac{1}{c^2} \dfrac{\partial \mathbf{E}_r}{\partial t}\\
+\dfrac{d}{dt}(\gamma m_e \mathbf{v}_s(t_r)) = -e(\mathbf{E}_r + \mathbf{v}_s(t_r) \times (\mathbf{B}_u + \mathbf{B}_r))
 \end{gather*}
 $$
 
-Where $e$ is the magnitude (absolute value) of the electron charge, $\mathbf{B}_u$ is the undulator field, $\mathbf{B}_\text{rad}$ is the radiative magnetic field, $\mathbf{E}$ is the electric field in the cavity, $n$ is the electron density, $m_e$ is the electron mass, $\mathbf{v}_e$ is the electron velocity, and $\mathbf{M}, \psi_m$ are the magnetization and magnetic scalar potential of the undulator (permanent) magnets.
+Where $e$ is the magnitude (absolute value) of the electron charge, $\mathbf{B}_u$ is the undulator field, $\mathbf{B}_r$ is the radiative magnetic field, $\mathbf{E}_r$ is the radiative electric field, $m_e$ is the electron mass, $\mathbf{v}_s$ is the electron velocity, $t_r$ is the retarded time, and $\mathbf{M}, \psi_m$ are the magnetization and magnetic scalar potential of the undulator's (permanent) magnets. We may also impose certain boundary conditions - for instance, we know that one side of the cavity is a reflecting mirror, so we would want reflective (Neumann) boundary conditions on that side. Unlike our previous theoretical models, this is an _exact_ model that doesn't use many approximations, and well-suited for performing numerical simulations.
 
 ## Maser performance characteristics
 
-The power of the electron beam can be calculated through $P_b = I_b\Delta V$, where $I_b$ is the beam current and $\Delta V$ is the potential difference between the anode and cathode. We may now derive an expression for $I_b$. From Richardson's law of thermionic emission, we find that the current density $J_b$ of electrons emitted by a material heated to temperature $T$ takes the form[^5]: 
+In a free-electron maser, the aim is to maximize output power in the direction of the beam. To quantify this, we want the efficiency of the maser to be as high as possible, meaning the ratio of the output power to the input power should be maximized.
+
+There are several major locations in the laser that are major possible sources of inefficiencies. The first is in the electron source. Assuming a basic single anode-cathode vacuum tube as the electron source, the power of the electron beam can be calculated through $P_b = I_b\Delta V$, where $I_b$ is the beam current and $\Delta V$ is the potential difference between the anode and cathode. The power of the incident light, $P_i$, will depend on the intensity $I_\ell$ of the light, and the cross-sectional area $A$ of the cathode. Thus, the efficiency $\Gamma_b$ of the electron source is given by:
+
+$$
+\Gamma_b = \dfrac{P_b}{P_i} = \dfrac{I_b\Delta V}{I_\ell A}
+$$
+
+We may now derive an expression for $I_b$. From Richardson's law of thermionic emission, we find that the current density $J_b$ of electrons emitted by a material heated to temperature $T$ takes the form[^5]: 
 
 $$
 J = A_G T^2 e^{-W/kT}
@@ -368,15 +553,7 @@ $$
 
 For large $T$, $T^2 e^{-W/kT} \approx T^2$, thus the current grows approximately quadratically with increasing temperature, and linearly with increasing surface area.
 
-The maximum power output of the maser is then given by[^7]:
-
-$$
-P_\text{max} = \left(\dfrac{\Gamma_\text{out}}{\Gamma_\text{out} + \Gamma_\text{loss}}\right) \dfrac{P_b}{2.4 N_w}
-$$
-
-Calculate:
-
-- Heat generated by maser
+We will now head to the next source of inefficiencies, which is in the undulator itself. The losses due to the electron beam are expected to be compounded depending on the quality of the vacuum, but with a very good vacuum, we can assume no power loss between the beam as it exits the electron source and when it enters the undulator.
 
 ### Laser gain
 
@@ -400,3 +577,8 @@ Gyrotrons are incredibly similar to free-electron masers.
 [^12]: According to the [official NASA documentation](https://mars.nasa.gov/internal_resources/788/) on the RTG of the [Perseverance rover](https://science.nasa.gov/mission/mars-2020-perseverance/)
 [^13]: According to [section 2.1 of this paper](https://advanced.onlinelibrary.wiley.com/doi/full/10.1002/advs.202203150)
 [^14]: See the [associated Wikipedia article](https://en.wikipedia.org/wiki/Fresnel_equations#Power_(intensity)_reflection_and_transmission_coefficients). We assume normal incidence as the electromagnetic waves in a laser propagate almost exclusively parallel to the optical axis.
+[^15]: From Jackson, _Classical Electrodynamics, 3rd ed._ Chapter 14.5 (pg. 677). Note that Jackson gives $x = a \sin k_0 z$, where $a$ is the maximum amplitude of oscillations. We have changed this to $z = z_0 \sin k_0 x$ due to our differing conventions for the coordinate system (our $x$ and $z$ are swapped compared to Jackson's coordinates) and we have replaced $a$ with $z_0$ to avoid confusion with the acceleration.
+[^16]: See the [associated Wikipedia article](https://en.wikipedia.org/wiki/Li%C3%A9nard%E2%80%93Wiechert_potential#Field_computation)
+[^17]: From the [Physics 222 course web notes](http://labman.phys.utk.edu/phys222core/modules/m6/production_of_em_waves.html) from the University of Tennessee, quote: _"The radiation field Erad produced by an accelerating point charge decreases as $1/r$, while the static Coulomb field decreases as $1/r^2$.  The static field decreases with distance much faster than the radiation field, and therefore the radiation field will dominate at large distance for accelerating charge distributions._
+[^18]: Also from the [Physics 222 course web notes](http://labman.phys.utk.edu/phys222core/modules/m6/production_of_em_waves.html) from the University of Tennessee. They give the equation as $\mathbf{E}(\mathbf{r}, t) = -\frac{1}{4\pi \varepsilon_0} \frac{q}{c^2 r'} \mathbf{a}_\perp(t - r'/c)$, where $r'$ is the _"...distance at some earlier time, called the retarded time, when the radiation field was produced"_, which we write as $r' = |\mathbf{r}-\mathbf{r}_s(t)|$.
+[^18]: From the [associated Wikipedia article](https://en.wikipedia.org/wiki/Li%C3%A9nard%E2%80%93Wiechert_potential#Derivation)
