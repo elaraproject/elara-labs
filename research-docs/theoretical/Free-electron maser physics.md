@@ -85,7 +85,7 @@ $$
 \mathbf{E}(\mathbf{r}, t) = \mathbf{E}_0  \psi(x, z) \sin \left(\dfrac{2\pi x}{\lambda_r}\right) \cos \omega t 
 $$
 
-Where $\psi(x, z)$ is the **beam profile** that describes the beam cross-sectional "shape", and $\lambda_r$ is the the wavelength of the emitted radiation, which is given by:
+Where $\psi(x, z)$ is the **beam profile** that describes the beam cross-sectional "shape", and $\lambda_r$ is the the wavelength of the emitted radiation, which is given by[^20]:
 
 $$
 \lambda_r = \dfrac{L_u}{2\gamma^2} \left(1 + \dfrac{K^2}{2}\right) \approx \dfrac{1}{2} L_u \left(1 + \dfrac{K^2}{2}\right) \quad (\gamma \ll 1)
@@ -143,7 +143,7 @@ $$
 \dfrac{1}{c^2r} \dfrac{(\hat r \times \boldsymbol{\beta}_s) \times \mathbf{a}_\perp}{(1 - \hat r \cdot \boldsymbol{\beta}_s)^3}
 $$
 
-Now, since $\hat r$ is the (retarded) unit vector, it must have unit magnitude. Assuming that we are examining the _transverse_ radiation of the field (most electromagnetic waves we encounter are transverse waves), then $\hat r$ and $\boldsymbol{\beta}_s$ are _nearly_ perpendicular, so $\hat r \cdot \boldsymbol{\beta}_s \approx 0$ and $(1 - \hat r \cdot \boldsymbol{\beta}_s)^3 \approx 1$. By the same reasoning, $|\hat r \times \boldsymbol{\beta}_s| \approx 1$, and thus we can simplify to[^16]:
+Now, since $\hat r$ is the (retarded) unit vector, it must have unit magnitude. Assuming that we are examining the _transverse_ radiation of the field (most electromagnetic waves we encounter are transverse waves), then $\hat r$ and $\boldsymbol{\beta}_s$ are _nearly_ perpendicular, so $\hat r \cdot \boldsymbol{\beta}_s \approx 0$ and $(1 - \hat r \cdot \boldsymbol{\beta}_s)^3 \approx 1$. By the same reasoning, $|\hat r \times \boldsymbol{\beta}_s| \approx 1$, and thus we can simplify to[^18]:
 
 $$
 \mathbf{E}(\mathbf{r}, t) = -\dfrac{1}{4\pi \varepsilon_0} \dfrac{q}{c^2 r}\mathbf{a}_\perp, \quad \mathbf{B} = \dfrac{1}{c} \hat r \times \mathbf{E}(\mathbf{r}, t)
@@ -499,7 +499,7 @@ $$
 \end{align}
 $$
 
-We can write out the current density term using the same current density term used to derive the radiation of a moving point charge from the [Liénard–Wiechert potentials](https://en.wikipedia.org/wiki/Li%C3%A9nard%E2%80%93Wiechert_potential)[^18]:
+We can write out the current density term using the same current density term used to derive the radiation of a moving point charge from the [Liénard–Wiechert potentials](https://en.wikipedia.org/wiki/Li%C3%A9nard%E2%80%93Wiechert_potential)[^19]:
 
 $$
 \mathbf{J} = q\mathbf{v}_s \delta^3(\mathbf{r} - \mathbf{r}_s(t_r)), \quad t_r \equiv t_r = t - \dfrac{|\mathbf{r} - \mathbf{r}_s|}{c}
@@ -581,4 +581,5 @@ Gyrotrons are incredibly similar to free-electron masers.
 [^16]: See the [associated Wikipedia article](https://en.wikipedia.org/wiki/Li%C3%A9nard%E2%80%93Wiechert_potential#Field_computation)
 [^17]: From the [Physics 222 course web notes](http://labman.phys.utk.edu/phys222core/modules/m6/production_of_em_waves.html) from the University of Tennessee, quote: _"The radiation field Erad produced by an accelerating point charge decreases as $1/r$, while the static Coulomb field decreases as $1/r^2$.  The static field decreases with distance much faster than the radiation field, and therefore the radiation field will dominate at large distance for accelerating charge distributions._
 [^18]: Also from the [Physics 222 course web notes](http://labman.phys.utk.edu/phys222core/modules/m6/production_of_em_waves.html) from the University of Tennessee. They give the equation as $\mathbf{E}(\mathbf{r}, t) = -\frac{1}{4\pi \varepsilon_0} \frac{q}{c^2 r'} \mathbf{a}_\perp(t - r'/c)$, where $r'$ is the _"...distance at some earlier time, called the retarded time, when the radiation field was produced"_, which we write as $r' = |\mathbf{r}-\mathbf{r}_s(t)|$.
-[^18]: From the [associated Wikipedia article](https://en.wikipedia.org/wiki/Li%C3%A9nard%E2%80%93Wiechert_potential#Derivation)
+[^19]: From the [associated Wikipedia article](https://en.wikipedia.org/wiki/Li%C3%A9nard%E2%80%93Wiechert_potential#Derivation)
+[^20]: From the CERN accelerator school's slides for an [Introduction to Free Electron Lasers](https://cas.web.cern.ch/sites/default/files/lectures/granada-2012/wolskifreeelectronlasers.pdf)

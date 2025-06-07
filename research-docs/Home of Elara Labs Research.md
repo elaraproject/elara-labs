@@ -16,6 +16,10 @@ Welcome! This is the Elara Labs research documentation. It is an [Obsidian](http
 [[Vacuum tube Lorentz factor calculation]]
 [[Computing the theoretical minimum divergence beam]]
 
+## Topic guides
+
+[[Free-electron maser physics]]
+
 ## Engineering/designs
 
 [[Spacecraft engineering]]
