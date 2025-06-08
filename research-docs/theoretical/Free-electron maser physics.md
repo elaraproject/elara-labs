@@ -67,7 +67,7 @@ As these electromagnetic waves travel outwards, they bounce off the mirrors at t
 $$
 \begin{gather}
 \mathbf{E}_{m,n,j} = \mathbf{E}_0\sin \left(\dfrac{n\pi z}{L_z}\right) \sin \left(\dfrac{m\pi y}{L_y}\right) \sin \left(\dfrac{j\pi x}{L_x}\right) \cos \omega t,\\
-\omega = \sqrt{\left(\frac{n\pi}{L_z}\right)^2 + \left(\frac{m\pi}{L_y}\right)^2 + \left(\frac{j\pi}{L_y}\right)^2}
+\omega = \sqrt{\left(\frac{n\pi}{L_z}\right)^2 + \left(\frac{m\pi}{L_y}\right)^2 + \left(\frac{j\pi}{L_x}\right)^2}
 \end{gather}
 $$
 
