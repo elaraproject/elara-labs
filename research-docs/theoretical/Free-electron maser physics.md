@@ -198,69 +198,69 @@ Letting $a = \pu{10 cm}$ and $R = \pu{1m}$, and assuming a tungsten plate (which
 
 Since we are using sunlight as the heating source for the hot cathode, we gain some of the benefits of photoinjector, in that we additionally have the photoelectric effect to release additional electrons. We may calculate this contribution as follows.
 
-To start with, the photoelectric effect, as the name suggests, is the phenomenon where electrons are released from a cathode when light is shined on the cathode. From Einstein's classical derivation of the photoelectric effect, we find that the maximum kinetic energy of the emitted electrons is given by:
+To start with, the photoelectric effect, as the name suggests, is the phenomenon where electrons are released when light is shined on the cathode. The photoelectric effect contributes to the total electron beam's current by causing the emission of more electrons from the cathode, where they become free electrons and are accelerated by the potential difference between the anode and the cathode. The greater number of electrons thus increases the current, and thus, by $P = I \Delta V$, the power of the electron beam, which directly affects the power of the maser.
+
+The **photocurrent density** $J$, which is the current produced by the cathode from photoelectric emission of light, depends on the number of photons incident on the cathode as well as a dimensionless parameter $\eta$, known as the **quantum efficiency** (more on that later). The precise expression is given by:
 
 $$
-K = h\nu - W
+J = -e \Phi_\gamma\eta
 $$
 
-Where $\nu$ is the frequency of the incident light, and $W$ is the work function, a material constant. Note that _technically_, sunlight is composed of a range of wavelengths (from 300-2500nm[^9]), as shown by the plot below:
+Where $\Phi_\gamma$ is the **photon flux**, which is the number of photons incident on the cathode per unit area per second. We can derive an expression for $\Phi_\gamma$ as follows. First, the total number of incident photons can be found from dividing the energy of the incident light by the energy of a single photon. A single photon has an energy of $E_\gamma = \hbar \omega$ - this comes from the well-known Planck formula. The total power of the beam can be found from the light intensity $I_0$ and the surface area of the cathode $A$ that is exposed to the incident light by $P = I_0 A$ (more generally, $P = \mathbf{I} \cdot \mathbf{A} = I_0 A \cos \theta$ when we account for the fact that the incident light may be striking the cathode at an angle $\theta$). The total energy transmitted by the beam over time $t$ is found by simply integrating the power over time, so we have:
+
+$$
+\begin{align}
+E_\text{total} &= \int_0^t P\, dt' = \int_0^t \mathbf{I} \cdot \mathbf{A}\, dt' \\
+&= (\mathbf{I} \cdot \mathbf{A})t
+\end{align}
+$$
+
+Thus. we find that the photon flux is therefore given by:
+
+$$
+\Phi_\gamma = \dfrac{\partial^2}{\partial A \partial t}\left(\dfrac{E_\text{total}}{E_\gamma}\right) = \dfrac{\partial^2}{\partial A \partial t}\left(\dfrac{(I_0 A \cos \theta) t}{\hbar \omega}\right) = \dfrac{I_0 \cos \theta}{\hbar \omega}
+$$
+
+However, we should note that this assumes a **monochromatic** (single-frequency) source of light, whereas most light (including sunlight) is a mix of different frequencies over a certain frequency range. For instance, sunlight is composed of a range of frequencies (corresponding to frequencies of 120-1000 THz, or equivalently, wavelengths from 300-2500nm[^9]), as shown by the plot below:
 
 ![[solar-spectrum.svg]]
 
-Therefore, $\nu$ should be replaced with $\nu_c$, the _central wavelength_, which can be found as follows:
+Thus, to find the _average_ photon flux, we must take the average by performing the following integral, where $\omega_0$ is the _minimum frequency_ and $\Delta \omega$ is the _frequency range_ of the light:
 
 $$
-\rho(\nu_c) = \dfrac{1}{\nu_b - \nu_a}\int_{\nu_a}^{\nu_b} \rho(\nu) d\nu, \quad \nu_c = \rho^{-1}(\nu_c)
+\begin{align}
+\Phi_\gamma &= \dfrac{1}{\Delta \omega} \int_{\omega_0}^{\omega_0 + \Delta \omega}\dfrac{I_0 \cos \theta}{\hbar \omega} d\omega \\
+&= \dfrac{I_0 \cos \theta}{\hbar\Delta \omega} \ln\left(\dfrac{\omega_0 + \Delta \omega}{\omega_0}\right) \\
+&= \dfrac{I_0 \cos \theta}{\hbar\Delta \omega} \ln\left(1+\dfrac{\Delta \omega}{\omega_0}\right)
+\end{align}
 $$
 
-Where $\rho(\nu)$ is the **spectral irradiance** of the solar spectrum (power density per frequency of sunlight), which well-studied in the literature, and $\rho^{-1}$ is its inverse function. Note that we can equivalently write the spectral irradiance in terms of wavelength, that is, $\rho(\lambda)$, since $\lambda = c/\nu$. This corresponds to a central wavelength of about $\pu{393.7 nm}$ or a central frequency of about $\pu{761.5 THz}$, which we show in the Mathematica notebook in `notebooks/solar-spectrum.nb`. In any case, using the modified equation $K = h\nu_c - W$, we may solve for the max velocity of the electrons. Since the electrons could well be relativistic, we use the relativistic kinetic energy $K = (\gamma - 1)m_e c^2$ where $\gamma$ is the Lorentz factor, $m_e$ is the electron mass, and $c$ is the speed of light, to obtain:
+And thus our expression for the current density becomes:
 
 $$
-\begin{gather*}
-K = (\gamma-1) m_e c^2 = h\nu_c - W \\
-\gamma = 1 + \dfrac{h\nu_c - W}{m_e c^2}, \quad \beta \equiv v/c = \sqrt{1 - \dfrac{1}{\gamma^2}}
-\end{gather*}
+J = -e\, \eta \left(\dfrac{I_0 \cos \theta}{\hbar\Delta \omega}\right) \ln\left(1 + \dfrac{\Delta \omega}{\omega_0}\right)
 $$
 
-Now substituting in numerical values, since metals typically have work functions between 2-5 eV[^6] (we use the minimum, so $W = \pu{2 eV}$), using our previously-obtained figure of $\nu_c = \pu{761.5 THz}$, we find that:
+The only undetermined factor now is the quantum efficiency $\eta$, which is likelihood of a single incident photon ejecting an electron. This value is typically a material property that is also dependent on wavelength, so technically speaking, $\eta$ should be written as $\eta(\omega)$. Calculating it theoretically is very difficult, so it is usually measured experimentally. We can obtain a ballpark figure by first determining the average wavelength of solar radiation, which we (loosely) term the **central wavelength** and denote it by $\lambda_c$. It can be found as follows:
 
 $$
-\begin{gather*}
-\dfrac{h\nu_c - W}{m_e c^2} = 2.24894 \times 10^{-6}, \\
-\beta \approx 0.0021, \quad v_e \approx  \pu{635,805 m/s}
-\end{gather*}
+\rho(\lambda_c) = \dfrac{1}{\lambda_b - \lambda_a}\int_{\lambda_a}^{\lambda_b} \rho(\lambda) d\lambda, \quad \lambda_c = \rho^{-1}(\lambda_c)
 $$
 
-The current density of the electrons is given by:
+Where $\rho(\lambda)$ is the **spectral irradiance** of the solar spectrum (power density per wavelength of sunlight), which we just plotted above, and $\rho^{-1}$ is its inverse function. Evaluating the integral numerically corresponds to a central wavelength of about $\pu{393.7 nm}$ or a central frequency of about $\pu{761.5 THz}$, which we show in the Mathematica notebook in `notebooks/solar-spectrum.nb`. Experimental measurements of commerical photosensitive devices (used in cameras) at the central wavelength of $\lambda_c = \pu{393.7 nm}$ give values of quantum efficiencies between 45% to 66%[^21], so $\eta \approx 0.5$. Thus, after plugging in known values for sunlight (which has intensity of about $\pu{1361 W/m^2}$ and a frequency range starting at $\lambda_0 \approx \pu{300 nm}$ with $\Delta \lambda \approx \pu{2200 nm}$), and assuming normal incidence (so $\cos \theta = 1$), we have:
 
 $$
-J(t) = -n v_e |e| = -n_t v_e|e| t
+\begin{align}
+\omega_0 &= \dfrac{2\pi c}{\lambda_0} \approx \pu{6278.8 THz} \\
+\Delta \omega &= \dfrac{2\pi c}{\Delta \lambda} \approx \pu{856.2 THz} \\
+J & \approx I_0 \cdot \pu{0.113 A*m^{-2}} \\
+&\approx\pu{154.4 A*m^{-2}}
+\end{align}
 $$
 
-Where $v$ is the electron velocity, $e$ is the electron charge, $n$ is the number of electrons per unit volume, and $n_t = n/t$. We may calculate $n$ from the cross-sectional area $A_b$ of the electron beam, the volume $V_b$ of the beam, and the mean solar intensity of $I_\odot = \pu{1361 W/m^2}$, to obtain[^10]:
+In everyday conditions, this does not result in a particularly high photocurrent - for a circular cathode of $\pu{3 cm}$ radius, the total photocurrent is only $\pu{0.43 A}$. However, what is important is that the photocurrent is _directly proportional_ to the light intensity. Thus, by increasing the light intensity (such as by focusing sunlight, say, to an area 10x smaller), then the total photocurrent increases linearly, leading to photocurrents of tens if not hundreds of amps for highly-concentrated sunlight, and contributing significantly to the power of the electron beam.
 
-$$
-\dfrac{n}{t} = \dfrac{1}{V_b} \dfrac{I_\odot A_b}{hf_c} \quad \Rightarrow \quad J(t) = -\dfrac{|e|}{V_b}t \left(\dfrac{v_e I_\odot A_b}{hf_c}\right)
-$$
-
-(Note that here, $f_c = \nu_c$ is still the central frequency, we just changed notation to avoid confusion between $v_e$ and $\nu_c$). Note that $A_b$ and $V_b$ are dependent on the magnets that confine the electron beam. Assuming that the electron source is a vaccum tube of length $L$, and a beam radius of $r_b$, this expression simplifies to:
-
-$$
-\dfrac{A_b}{V_b} = \dfrac{\pi r_b^2}{\pi r_b^2 L} = \dfrac{1}{L} 
-\quad \Rightarrow \quad
-J(t) = -\dfrac{|e|}{L}t \left(\dfrac{v_e I_\odot }{hf_c}\right)
-$$
-
-If the vaccum tube were of length $L = \pu{30 cm}$, and the electron beam were of radius $r_b = \pu{1 mm}$, then the total current is given by:
-
-$$
-I(t) = \pi r_b^2 J(t) \approx (\pu{2877A/s})t
-$$
-
-> **Note:** Of course, our result is an approximation, since the current does not linearly increase to infinity; a more sophisticated analysis would reveal that the current $I(t)$ eventually reaches a saturation point.
-
-In physical terms, the photoelectric effect contributes to the total electron beam's current by causing the emission of more electrons from the cathode, where they become free electrons and are accelerated by the potential difference between the anode and the cathode. The greater number of electrons thus increases the current, and thus, by $P = I \Delta V$, the power of the electron beam, and indirectly, the power of the maser beam.
+> **Note:** Of course, our result is an approximation, since the photocurrent does not linearly increase to infinity; a more sophisticated analysis would reveal that the photocurrent eventually reaches a saturation point, but that would involve sophisticated semiconductor physics that we'll not go into here.
 
 ### Maintaining a cathode-anode voltage
 
@@ -465,6 +465,41 @@ $$
 
 From which we may obtain fairly high field strengths of $\pu{0.15T - 0.25T}$. Note that if one of the dimensions is greater than $\sqrt[3]{6} \approx 1.8$ times the separation distance $d$, then we have $B_y \approx -B_r$ and we can achieve very high field strengths of up to $\pu{1 T}$ or even more.
 
+
+#### Basic experimental verification using a simple compass magnet
+
+A rudimentary way to test the correctness of this theoretical result is with a simple toy experiment. Place a small compass needle near a pair of alternating neodynium magnets. Here $\vec m$ is the magnetic moment of the test (compass-style) magnet, which has a magnetic remanence $B_{r, c}$ approximately that of Earth's magnetic field ($25-65 \mathrm{\mu G}$, where $1\mu G = 1 \times 10^{-6}\text{ T}$). Thus its magnetic moment magnitude is:
+
+$$
+|\vec m| = \dfrac{1}{\mu_0} B_{r, c}V_{compass}
+$$
+
+Where $V_{compass}$ is the compass needle volume. Meanwhile, $\mathbf{B}_0$ is the ambient field generated by the primary magnet. We assume that the test magnet does not disturb the field to a great degree. The magnetic field $\mathbf{B}_m$ of each magnet would have the following magnitude, as per our calculations:
+
+$$
+B_m = \pm \dfrac{B_r V}{2\pi d^3}
+$$
+
+We would expect the magnetic field to vary sinusoidally along the alternating magnets, but as a first approximation, we can assume the magnetic field to vary linearly along the $x$ axis between them. Thus, the field in between the two magnets is then:
+
+$$
+B_0 = \dfrac{B_{m^+} - B_{m^-}}{2} = \dfrac{B_r V}{2\pi d^3}
+$$
+
+The magnitude of the force on the compass needle due to the ambient field is given by:
+
+$$
+F_B = \nabla(\vec m \cdot \mathbf{B}) = \dfrac{\partial}{\partial d} |\vec m| \dfrac{B_r V}{2\pi d^3} = -3|\vec m| \dfrac{B_r V}{2\pi d^2} = -3 |\vec m|B_0/d
+$$
+
+Assuming small oscillations, we can model this as simple harmonic oscillator, where $F = m_{mag}R\omega^2$, where $R$ is the length of the test magnet needle and $m_{mag}$ is its mass. Therefore, we have:
+
+$$
+\omega^2 = \dfrac{|F_B|}{m_{mag}R} = \dfrac{3|\vec m|B_0/d}{m_{mag}R} \Rightarrow \omega = \sqrt{\dfrac{3|\vec m|B_0}{m_{mag}Rd}}
+$$
+
+> **Note:** It should be pretty evident that this can yield at most an **order-of-magnitude** agreement with theory. An EMF meter and a much more sensitive experiment would be necessary for anything more precise.
+
 ### The free-electron maser equations
 
 We can now put everything together to derive a set of equations to describe the free-electron maser. First, we write the magnetic field as the sum of a purely spatial component $\mathbf{B}_u$ (for the field of the undulator magnets) and a radiative component $\mathbf{B}_r$ (for the electromagnetic radiation emitted by the moving electrons). This does not require any approximations since we know that the magnets are permanent magnets, so $\mathbf{B}_u$ is necessarily time-independent. Thus we have:
@@ -583,3 +618,4 @@ Gyrotrons are incredibly similar to free-electron masers.
 [^18]: Also from the [Physics 222 course web notes](http://labman.phys.utk.edu/phys222core/modules/m6/production_of_em_waves.html) from the University of Tennessee. They give the equation as $\mathbf{E}(\mathbf{r}, t) = -\frac{1}{4\pi \varepsilon_0} \frac{q}{c^2 r'} \mathbf{a}_\perp(t - r'/c)$, where $r'$ is the _"...distance at some earlier time, called the retarded time, when the radiation field was produced"_, which we write as $r' = |\mathbf{r}-\mathbf{r}_s(t)|$.
 [^19]: From the [associated Wikipedia article](https://en.wikipedia.org/wiki/Li%C3%A9nard%E2%80%93Wiechert_potential#Derivation)
 [^20]: From the CERN accelerator school's slides for an [Introduction to Free Electron Lasers](https://cas.web.cern.ch/sites/default/files/lectures/granada-2012/wolskifreeelectronlasers.pdf)
+[^21]: From [Scientific Imaging](https://scientificimaging.com/knowledge-base/quantum-efficiency-spec-res/). Data taken from the interactive comparative QE curve plot at $\lambda = \pu{390 nm}$.
