@@ -1,0 +1,34 @@
+// build geometry - (x, y) coordinates version
+
+// parabolic reflectors
+// we split the main reflector into 2 pieces
+// because there is a beam outlet (hole) in the middle
+// so we represent as 2 pieces of a piecewise function
+// for each
+border reflector1down(t=-R1, -b){ x=(d1 - 1/(2*R1) * t^2); y=t; label=1; }
+border reflector1up(t=b, R1){ x=(d1 - 1/(2*R1) * t^2); y=t; label=1; }
+// secondary reflector
+border reflector2(t=-R2, R2){ x=(d1 - (R1/2) + 1/(2*R1) * t^2); y = t; label=2; }
+
+// bounding box
+// we need to make sure the domain is on the left side
+// of the border always, so for some of these borders
+// we reverse the parametrization
+border boxL(t=1, 0){ x=-L/2; y=verticalWallY(t); label=3; }
+border boxR(t=0, 1){ x=L/2; y=verticalWallY(t); label=3; }
+border boxT(t=1, 0){ x=horizontalWallX(t); y=D/2; label=3; }
+border boxB(t=0, 1){ x=horizontalWallX(t); y=-D/2; label=3; }
+
+// Uncomment this line to plot all the borders
+// plot(reflector1up(30) + reflector1down(30) + reflector2(5) + boxL(squaren) + boxR(squaren) + boxT(squaren) + boxB(squaren), wait=1, cmm="Boundaries", wait=1);
+
+// border(nn) means to create a border with nn vertices
+
+mesh Th = buildmesh(reflector1up(5 * n) + reflector1down(5 * n) + reflector2(2 * n) + boxL(squaren) + boxT(squaren) + boxR(squaren) + boxB(squaren));
+
+// Plot the generated domain mesh
+plot(Th, cmm="Finite element mesh", wait=1);
+
+// finite element space
+fespace Vh(Th, P1);
+Vh Phix, Phiy; // test function
