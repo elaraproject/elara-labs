@@ -8,7 +8,7 @@ This is the most promising idea so far: a free electron maser that uses a relati
 
 For Project Elara, the main challenge is to make the laser **purely optically-powered**, that is, purely powered by the concentrated sunlight, and as high-efficiency as possible. That is something we need to do a lot of work on.
 
-For more info see: [[Calculation of free electron maser parameters]] and [[Free-electron maser physics]]
+For more info see: [[Calculation of free electron maser parameters]] and [[Free-electron maser physics]] and [[RF cavity simulation with aperture]]
 
 ### Tested idea: solid-state optically-pumped maser
 
