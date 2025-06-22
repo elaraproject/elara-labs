@@ -1,0 +1,115 @@
+/* Written for FreeFEM++ v4.15 */
+
+// This solves the Helmholtz equation
+// for a rectangular RF cavity with a small
+// aperture
+
+// The code is incorrect but it is kept
+// here for archival purposes
+
+int top = 1;
+int right = 2;
+int bottom = 3;
+int left = 4;
+int edge = 5;
+int all = 6;
+
+real a = 0.1; // aperture diameter
+real b = (1 - a) / 2;
+real R = 10.0; // This should be a "large" number to simulate infinite domain
+
+// in theory, we would need an infinite domain
+// to properly simulate waves propagating to
+// infinity, but we'll approximate this
+// by making the domain bounded by a circle
+// of radius R that is effectively infinite
+border boxtop(t=1, 0){ x=t; y=1; label=top; } // top
+border boxrightup(t=0, b){ x=1; y=t; label=right; } // upper right
+border boxrightdown(t=0, b){ x=1; y=(1 - t); label=right; } // lower right
+border boxbottom(t=0, 1){ x=t; y=0; label=bottom; } // bottom
+border boxleft(t=1, 0){ x=0; y=t; label=left; } // left
+border circle(t=0,2*pi){x=(R*cos(t) + 0.5); y=(R*sin(t) + 0.5); label=edge; } // circular boundary to fake a boundary at infinity
+
+mesh Th = buildmesh(boxtop(15) + boxrightup(5) + boxrightdown(5) + boxbottom(15) + boxleft(10) + circle(200));
+plot(Th, value=1, wait=1);
+
+/*
+For values of k^2 = (n^2 + m^2) pi^2
+then the homogenous Neumann problem
+yields a solution even with
+E = 0 at the boundaries.
+
+For all other values of k, the homogenous
+Neumann problem yields a null solution, since
+the Helmholtz equation (D^2 + k^2) E = 0
+is an eigenvalue problem and the only
+solutions are the eigenfunctions of the
+Helmholtz operator.
+*/
+
+fespace Vh(Th, P1);
+Vh<complex> TestPhi, Emag;
+
+complex sigma = 2; // shift value, this is used by eigenvalue solver
+
+macro grad(u) [dx(u), dy(u)] //
+
+// Variational (weak) form of the Laplacian operator w/ boundary conds
+varf Laplacian(Emag, TestPhi)
+    = int2d(Th)(
+        grad(Emag)' * grad(TestPhi)
+    )
+    - int2d(Th)(
+        // sigma term for eigenvalue
+        // solver
+        sigma * Emag * TestPhi
+    )
+    // radiative BC at "infinite" edge
+    - int1d(Th, edge)(
+        1i * Emag * TestPhi
+    )
+    // reflective BC
+    + on(top, right, bottom, left, Emag=1);
+
+
+// Right-hand side of the Helmholtz equation (D^2 u = -k^2 u) in
+// variational form (but we drop the k^2 since that's the eigenvalue
+// that the solver finds). This is effectively a source term which
+// creates the inhomogeneity in the PDE.
+varf rhs([Emag], [TestPhi]) 
+    = int2d(Th) ( -1 * Emag * TestPhi );
+
+// Discretize the variational form of the Helmholtz equation as a matrix
+matrix<complex> HelmholtzOperator = Laplacian(Vh, Vh, solver="SPARSESOLVER");
+matrix<complex> SourceTerm = rhs(Vh, Vh, solver=GMRES, eps=1e-20);
+
+// number of EM field modes to compute
+int nev=5;
+
+// arrays to store eigenvalues
+// and eigenfunctions
+complex[int] eigenvals(nev);
+Vh<complex>[int] eigenfuncs(nev);
+
+// solve for the eigenvalues and eigenfunctions
+int numK = EigenValue(HelmholtzOperator, SourceTerm,sigma=sigma,
+	value=eigenvals, vector=eigenfuncs, tol=1e-10,maxit=0, ncv=0);
+
+for (int i=0; i<numK; i++) {
+    // extract the field mode components
+    Vh fieldModereal = real(eigenfuncs[i]);
+    Vh fieldModeimag = imag(eigenfuncs[i]);
+    Vh fieldModeabs = abs(eigenfuncs[i]);
+    // extract eigenvalues
+    complex k = eigenvals[i];
+    
+    // plot real & imaginary parts of the field
+    plot(fieldModereal, value=true, fill=true, dim=2, cmm="Real Part of E-field (k=" + k + ")", wait=1);
+    plot(fieldModeimag, value=true, fill=true, dim=2, cmm="Imaginary Part of E-field (k=" + k + ")", wait=1);
+    plot(fieldModeabs, value=true, fill=true, dim=2, cmm="Magnitude of E-field (k=" + k + ")", wait=1);
+
+	// Vh fieldMode = eigenfuncs[i];
+	// real wavenumber = sqrt(abs(eigenvals[i]));
+	// plot(fieldMode, value=true, fill=true, dim=2, 
+	//  cmm="Electric field with k = " + wavenumber, wait=1);
+}
