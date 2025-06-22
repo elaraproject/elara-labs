@@ -4,21 +4,13 @@
 // for a rectangular RF cavity with a small
 // aperture
 
-// int top = 1;
-// int left = 2;
-// int bottom = 3;
-// int upperRight = 4;
-// int lowerRight = 5;
-// int edge = 6;
-// int aperture = 7;
 int cavity = 1;
 int aperture = 2;
 int edge = 3;
 
 real a = 0.3; // aperture diameter
 real b = (1 - a) / 2;
-real R = 3; // This should be a "large" number to simulate infinite domain
-// real R = 10.0;
+real R = 10.0; // This should be a "large" number to simulate infinite domain
 
  // use (n, m)-th mode
 int n = 1;
@@ -115,7 +107,11 @@ solve Helmholtz(Emag, TestPhi)
     )
     // perfectly-reflective BC
     + on(cavity, Emag=0)
-    // absorption (neumann) BC
+    // radiative BC on aperture
+    // - int1d(Th, aperture)(
+    //     1i * k * Emag * TestPhi
+    // );
+    // constant-field (neumann) BC
     + on(aperture, Emag=1);
 
 Vh Ereal = real(Emag);
@@ -123,5 +119,5 @@ Vh Eimag = imag(Emag);
 Vh Eabs = abs(Emag);
 
 // plot real & imaginary parts of the field
-plot(Ereal, value=true, fill=true, dim=2, cmm="Real Part of E-field (k=" + k + ")", ps="rf-cavity.ps", wait=1);
+plot(Ereal, value=true, fill=true, dim=2, cmm="Real Part of E-field (k=" + k + ")", wait=1);
 plot(Eimag, value=true, fill=true, dim=2, cmm="Imaginary Part of E-field (k=" + k + ")", wait=1);
