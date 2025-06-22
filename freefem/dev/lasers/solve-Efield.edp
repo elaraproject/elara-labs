@@ -4,44 +4,81 @@
 // for a rectangular RF cavity with a small
 // aperture
 
-int top = 1;
-int left = 2;
-int bottom = 3;
-int upperRight = 4;
-int lowerRight = 5;
-int edge = 6;
-int aperture = 7;
+// int top = 1;
+// int left = 2;
+// int bottom = 3;
+// int upperRight = 4;
+// int lowerRight = 5;
+// int edge = 6;
+// int aperture = 7;
+int cavity = 1;
+int aperture = 2;
+int edge = 3;
 
 real a = 0.3; // aperture diameter
 real b = (1 - a) / 2;
-real R = 10.0; // This should be a "large" number to simulate infinite domain
+real R = 3; // This should be a "large" number to simulate infinite domain
+// real R = 10.0;
 
  // use (n, m)-th mode
 int n = 1;
 int m = 0;
 real k = sqrt(n^2 + m^2) * pi;
+// We assume perfectly-conductive cavity walls
+// but with some nonzero thickness as advised
+// by https://community.freefem.org/t/correctness-of-solution-for-helmholtz-equation-for-open-rf-cavity/3978/2
+real h = 0.05; // thickness of the RF cavity walls
 
 // in theory, we would need an infinite domain
 // to properly simulate waves propagating to
 // infinity, but we'll approximate this
 // by making the domain bounded by a circle
 // of radius R that is effectively infinite
-border boxtop(t=1, 0){ x=t; y=1; label=top; } // top
-border boxrightup(t=0, b){ x=1; y=t; label=upperRight; } // upper right
-border boxrightdown(t=0, b){ x=1; y=(1 - t); label=lowerRight; } // lower right
+
+// top wall
+border boxtopInner(t=1, 0){ x=t; y=1; label=cavity; }
+border boxtopOuter(t=1, 0){ x=((1 + 2*h)*t - h); y=1+h; label=cavity; }
+
+// right wall
+border boxrightupInner(t=0, 1){ x=1; y=b*t; label=cavity; } // upper right
+border boxrightupOuter(t=0, 1){ x=1+h; y=((b + h)*t - h); label=cavity; }
+border boxUpperConnector(t=1, 1+h) { x = t; y=b; label=cavity; }
+
+border boxrightdownInner(t=0, 1){ x=1; y=(1 - b*t); label=cavity; } // lower right
+border boxrightdownOuter(t=1, 0){ x=1+h; y=(1-b + (h + b)*t); label=cavity; }
+border boxLowerConnector(t=1, 1+h) { x = t; y=(1-b); label=cavity; }
+
 border boxaperture(t=0, 1){ x=1; y=((t + b/a)*a); label=aperture; } // aperture
-border boxbottom(t=0, 1){ x=t; y=0; label=bottom; } // bottom
-border boxleft(t=1, 0){ x=0; y=t; label=left; } // left
-border circle(t=0,2*pi){x=(R*cos(t) + 0.5); y=(R*sin(t) + 0.5); label=edge; } // circular boundary to fake a boundary at infinity
+
+// bottom wall
+border boxbottomInner(t=0, 1){ x=t; y=0; label=cavity; } // bottom
+border boxbottomOuter(t=0, 1){ x=((1 + 2*h)*t - h); y=-h; label=cavity; } // bottom
+
+// left wall
+border boxleftInner(t=1, 0){ x=0; y=t; label=cavity; } // left
+border boxleftOuter(t=1, 0){ x=-h; y=((1 + 2*h)*t - h); label=cavity; } // left
+
+// circular boundary to fake a boundary at infinity
+border circle(t=0,2*pi){x=(R*cos(t) + 0.5); y=(R*sin(t) + 0.5); label=edge; }
 
 int nSides = 50;
 int nOpening = 25;
 int nCircle = 200;
 
 mesh Th = buildmesh(
-    boxtop(nSides) + boxrightup(nOpening)
-    + boxrightdown(nOpening) + boxbottom(nSides) 
-    + boxleft(nSides) + circle(nCircle)
+    boxtopInner(nSides) 
+    + boxtopOuter(nSides)
+    + boxrightupInner(nOpening)
+    + boxrightupOuter(nOpening)
+    + boxUpperConnector(3)
+    + boxrightdownInner(nOpening)
+    + boxrightdownOuter(nOpening)
+    + boxLowerConnector(3)
+    + boxbottomInner(nSides) 
+    + boxbottomOuter(nSides) 
+    + boxleftInner(nSides)
+    + boxleftOuter(nSides)
+    + circle(nCircle)
     + boxaperture(nOpening)
     );
 plot(Th, cmm="Discretized domain", value=1, wait=1);
@@ -77,7 +114,7 @@ solve Helmholtz(Emag, TestPhi)
         1i * k * Emag * TestPhi
     )
     // perfectly-reflective BC
-    + on(top, bottom, left, upperRight, lowerRight, Emag=0)
+    + on(cavity, Emag=0)
     // absorption (neumann) BC
     + on(aperture, Emag=1);
 
