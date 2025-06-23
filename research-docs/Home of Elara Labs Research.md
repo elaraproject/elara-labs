@@ -33,6 +33,7 @@ Welcome! This is the Elara Labs research documentation. It is an [Obsidian](http
 ## Prototyping and experimental testing
 
 [[Project Elara first light design]]
+[[Test build of a free-electron maser]]
 
 ## Helpful resources and guides
 
