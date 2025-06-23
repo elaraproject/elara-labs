@@ -9,10 +9,10 @@ The relativistic electron beam from the vacuum tube then passes through the undu
 The free-electron maser can be _precisely tuned_ to a desired wavelength, because it doesn't rely on atomic transitions - instead, it relies on the radiation emitted by the relativistic electrons, and the geometric and magnetic characteristics of the undulator. The undulator strength is often expressed with the dimensionless constant $K$, given by:
 
 $$
-K = \dfrac{eB_0 L_u}{2\pi m_e c} \approx 93.4\,B_0L_u
+K = \dfrac{eB_0 L_u}{2\pi m_e c} \approx (\pu{93.4 A/N})\,B_0L_u
 $$
 
-Where $e$ is the elementary charge, $m_e$ is the electron mass, $c$ is the speed of light, and $B_0, L_u$ are the tunable parameters, corresponding to the magnetic field strength and the period of the magnets respectively. The emitted wavelength of the free-electron maser is given by:
+Where $e$ is the elementary charge, $m_e$ is the electron mass, $c$ is the speed of light, and $B_0, L_u$ are the tunable parameters, corresponding to the magnetic field strength and the period of the magnets respectively, which simplifies to $\pu{93.4 A/N}$ (amperes per newton) multiplied by $B_0 L_u$. The emitted wavelength of the free-electron maser is given by:
 
 $$
 \lambda_r = \dfrac{L_u}{2\gamma^2}\left(1 + \dfrac{1}{2}K^2\right)

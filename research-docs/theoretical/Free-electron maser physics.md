@@ -566,37 +566,45 @@ Where $e$ is the magnitude (absolute value) of the electron charge, $\mathbf{B}_
 
 ## Maser performance characteristics
 
-In a free-electron maser, the aim is to maximize output power in the direction of the beam. To quantify this, we want the efficiency of the maser to be as high as possible, meaning the ratio of the output power to the input power should be maximized.
-
-There are several major locations in the laser that are major possible sources of inefficiencies. The first is in the electron source. Assuming a basic single anode-cathode vacuum tube as the electron source, the power of the electron beam can be calculated through $P_b = I_b\Delta V$, where $I_b$ is the beam current and $\Delta V$ is the potential difference between the anode and cathode. The power of the incident light, $P_i$, will depend on the intensity $I_\ell$ of the light, and the cross-sectional area $A$ of the cathode. Thus, the efficiency $\Gamma_b$ of the electron source is given by:
+In a free-electron maser, the aim is to maximize output power in the *direction* of the beam. To quantify this, we want the efficiency of the maser to be as high as possible, meaning the ratio of the output power to the input power should be maximized. We can calculate the efficiency $\Gamma$ of the maser as follows:
 
 $$
-\Gamma_b = \dfrac{P_b}{P_i} = \dfrac{I_b\Delta V}{I_\ell A}
+\Gamma = \dfrac{P_\text{out}}{P_\text{in}} = P_\text{in} \cdot \Gamma_b \cdot \Gamma_u \cdot \Gamma_a
 $$
 
-We may now derive an expression for $I_b$. From Richardson's law of thermionic emission, we find that the current density $J_b$ of electrons emitted by a material heated to temperature $T$ takes the form[^5]: 
+Where $P_\text{in}$ is the input power (which is based on the solar constant of $\pu{1361 W/m^2}$ and how tightly the solar mirrors can focus the sunlight), $\Gamma_b$ is the efficiency of the electron source, $\Gamma_u$ is the efficiency of the undulator, and $\Gamma_a$ is the efficiency of the aperture/output coupler.
+
+Let us first examine the electron source. Assuming a basic single anode-cathode vacuum tube as the electron source, and ignoring photoemission for now, the power of the electron beam can be calculated through $P_b = i_b\Delta V$, where $i_b$ is the beam current and $\Delta V$ is the potential difference between the anode and cathode. The power of the incident light, $P_i$, will depend on the intensity $I_\ell$ of the incident sunlight, and the cross-sectional area $A_c$ of the cathode. Thus, the efficiency $\Gamma_b$ of the electron source is given by:
+
+$$
+\Gamma_b = \dfrac{P_b}{P_i} = \dfrac{i_b\Delta V}{I_\ell A_c}
+$$
+
+We may now derive an expression for $i_b$. From Richardson's law of thermionic emission, we find that the current density $J_b$ of electrons emitted by a material heated to temperature $T$ takes the form[^5]: 
 
 $$
 J = A_G T^2 e^{-W/kT}
 $$
 
-Where $W$ is the work function of the material (again, for metals this is typically between 2-5 eV[^6]), $k_B$ is the Boltzmann constant, and $A_G$ is the Richardson constant, which is a material-dependent constant. The current $I_b$ is simply the integral over the cross-section of the beam, which, assuming the beam to have radius $R_b$, comes out to be:
+Where $W$ is the work function of the material (again, for metals this is typically between 2-5 eV[^6]), $k_B$ is the Boltzmann constant, and $A_G$ is the Richardson constant, which is a material-dependent but can be approximated for most materials as $A_G \approx \pu{6.009E5 A*m^{-2}*K^{-2}}$. The current $i_b$ is simply the integral over the cross-sectional area of the beam, which becomes:
 
 $$
-I_b = \int J\, dA = A_G \pi R_b^2\, T^2 e^{-W/k_BT}
+i_b = \int J\, dA = A_G A_c\, T^2 e^{-W/k_BT}
 $$
 
-For large $T$, $T^2 e^{-W/kT} \approx T^2$, thus the current grows approximately quadratically with increasing temperature, and linearly with increasing surface area.
+For large $T$, $T^2 e^{-W/kT} \sim e^{-t}$, but for small $T$, $T^2 e^{-W/kT} \sim T^2$, thus the current grows approximately quadratically with increasing temperature up to a certain point, then decays exponentially. In addition, the current grows linearly with increasing cross-sectional area. Our analytical expression for the electron beam efficiency then becomes:
 
-We will now head to the next source of inefficiencies, which is in the undulator itself. The losses due to the electron beam are expected to be compounded depending on the quality of the vacuum, but with a very good vacuum, we can assume no power loss between the beam as it exits the electron source and when it enters the undulator.
+$$
+\Gamma_b = \dfrac{A_G A_c\Delta V}{I_\ell A_c}\, T^2 e^{-W/k_BT} = \dfrac{A_G \Delta V}{I_\ell}T^2 e^{-W/k_BT}
+$$
 
-### Laser gain
+Thus, we see that the efficiency is still proportional to the square of the temperature $T$, although no longer dependent on cross-sectional area. Thus, increasing the temperature will also increase the efficiency, up to a certain point; above that point, the efficiency will drop.
 
-
+The next source of inefficiencies is in the undulator itself. The losses due to the electron beam are expected to be compounded depending on the quality of the vacuum, but with a very good vacuum, we can assume no power loss between the beam as it exits the electron source and when it enters the undulator. Rather, the main issue will be how well the magnetic field inside the undulator and the mirrors of the maser cavity emit radiation. Additionally, any microwaves that leak out of the undulator would affect the overall power output. Calculating these effects is beyond the scope of this article.
 
 ## Free electron masers vs. gyrotrons
 
-Gyrotrons are incredibly similar to free-electron masers.
+Finally, we should discuss a related technology: [gyrotrons](https://en.wikipedia.org/wiki/Gyrotron). Gyrotrons are incredibly similar to free-electron masers, in that they use an electron beam of electrons emitting synchrotron radiation to produce microwaves, and an optical cavity to cause those microwaves to form a coherent beam.[^22] However, instead of using an undulator, they use a superconducting magnet that causes their electron beam to take a helical path (rather than the "wiggling" path of an undulator). They may be a worthwhile technology to investigate separately.
 
 [^1]: From [Physics Stack Exchange](https://physics.stackexchange.com/questions/189004/finding-the-magnetic-moment-of-a-permanent-magnet-to-calculate-the-torque-when-e)
 [^2]: See [this answer](https://physics.stackexchange.com/questions/748197/field-lines-of-two-bar-magnets-becoming-one-bar-magnet)
@@ -619,3 +627,4 @@ Gyrotrons are incredibly similar to free-electron masers.
 [^19]: From the [associated Wikipedia article](https://en.wikipedia.org/wiki/Li%C3%A9nard%E2%80%93Wiechert_potential#Derivation)
 [^20]: From the CERN accelerator school's slides for an [Introduction to Free Electron Lasers](https://cas.web.cern.ch/sites/default/files/lectures/granada-2012/wolskifreeelectronlasers.pdf)
 [^21]: From [Scientific Imaging](https://scientificimaging.com/knowledge-base/quantum-efficiency-spec-res/). Data taken from the interactive comparative QE curve plot at $\lambda = \pu{390 nm}$.
+[^22]: More details in the [Gyrotron wikipedia article](https://en.wikipedia.org/wiki/Gyrotron)
