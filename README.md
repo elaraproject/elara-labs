@@ -1,5 +1,7 @@
 # Elara Labs
 
+> :warning: **IMPORTANT:** Project Elara has switched over to the open-source forge [Codeberg](https://codeberg.org/). The Project Elara repositories have been moved to [this Codeberg page](https://codeberg.org/elaraproject/). **This GitHub repository is no longer maintained**.
+
 Elara Labs is the current centralized repository where the majority of Project Elara's research and development work is ongoing. Here, we work on (or are going to start work on):
 
 - Power transmission calculations
